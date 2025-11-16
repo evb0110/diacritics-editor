@@ -5,11 +5,7 @@ export interface IToolbarButtonConfig {
     isBold?: boolean
 }
 
-export interface IToolbarLinkPopoverConfig {
-    type: 'link-popover'
-}
-
-export type TToolbarItemConfig = IToolbarButtonConfig | IToolbarLinkPopoverConfig
+export type TToolbarItemConfig = IToolbarButtonConfig
 
 export const toolbarConfig: TToolbarItemConfig[][] = [
     [
@@ -17,9 +13,6 @@ export const toolbarConfig: TToolbarItemConfig[][] = [
         { type: 'button', id: 'italic', icon: 'tabler:italic' },
         { type: 'button', id: 'underline', icon: 'tabler:underline' },
         { type: 'button', id: 'strikethrough', icon: 'tabler:strikethrough' },
-    ],
-    [
-        { type: 'link-popover' },
     ],
     [
         { type: 'button', id: 'undo', icon: 'tabler:arrow-back-up' },

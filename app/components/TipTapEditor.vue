@@ -4,8 +4,6 @@
             <EditorToolbar
                 :items="toolbarItems"
                 @button-click="handleButtonClick"
-                @set-link="handleSetLink"
-                @remove-link="handleRemoveLink"
             />
         </template>
         <div class="editor-wrapper flex flex-1 p-4 lg:p-5 overflow-y-auto">
@@ -34,7 +32,7 @@ import { useTipTapEditor } from '~/composables/useTipTapEditor'
 import { useArticleStorage } from '~/composables/useArticleStorage'
 import { whenever } from '@vueuse/core'
 import { toolbarConfig, type TToolbarItemConfig } from '~/utils/editorToolbarConfig'
-import type { IToolbarButton, IToolbarLinkPopover } from '~/components/EditorToolbar.vue'
+import type { IToolbarButton } from '~/components/EditorToolbar.vue'
 
 const { content, isLoading } = useArticleStorage()
 
@@ -114,18 +112,7 @@ const checkCanExecute = (buttonId: string, editor: Editor): boolean => {
     return canExecuteChecks[buttonId as keyof typeof canExecuteChecks]?.() ?? true
 }
 
-const transformConfigItem = (config: TToolbarItemConfig): IToolbarButton | IToolbarLinkPopover => {
-    if (config.type === 'link-popover') {
-        return {
-            type: 'link-popover',
-            isActive: editor.value?.isActive('link') ?? false,
-            currentUrl: editor.value?.isActive('link')
-                ? editor.value.getAttributes('link').href
-                : undefined,
-            isDisabled: !editor.value,
-        }
-    }
-
+const transformConfigItem = (config: TToolbarItemConfig): IToolbarButton => {
     return {
         type: 'button',
         id: config.id,
@@ -143,18 +130,6 @@ const toolbarItems = computed(() => {
 const handleButtonClick = (buttonId: string) => {
     if (editor.value) {
         executeCommand(buttonId, editor.value)
-    }
-}
-
-const handleSetLink = (url: string) => {
-    if (editor.value) {
-        editor.value.chain().focus().setLink({ href: url }).run()
-    }
-}
-
-const handleRemoveLink = () => {
-    if (editor.value) {
-        editor.value.chain().focus().unsetLink().run()
     }
 }
 </script>

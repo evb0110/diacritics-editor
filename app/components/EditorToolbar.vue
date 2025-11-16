@@ -4,29 +4,17 @@
             v-for="(group, groupIndex) in items"
             :key="groupIndex"
         >
-            <template
+            <UButton
                 v-for="(item, itemIndex) in group"
                 :key="itemIndex"
-            >
-                <UButton
-                    v-if="item.type === 'button'"
-                    :icon="item.icon"
-                    :color="item.isActive ? 'primary' : 'neutral'"
-                    :variant="item.isActive ? 'soft' : 'ghost'"
-                    :disabled="item.isDisabled"
-                    :class="getButtonClasses(item)"
-                    :ui="editorButtonUi"
-                    @click="emit('buttonClick', item.id)"
-                />
-                <LinkPopover
-                    v-else-if="item.type === 'link-popover'"
-                    :is-link-active="item.isActive"
-                    :current-url="item.currentUrl"
-                    :disabled="item.isDisabled"
-                    @set-link="emit('setLink', $event)"
-                    @remove-link="emit('removeLink')"
-                />
-            </template>
+                :icon="item.icon"
+                :color="item.isActive ? 'primary' : 'neutral'"
+                :variant="item.isActive ? 'soft' : 'ghost'"
+                :disabled="item.isDisabled"
+                :class="getButtonClasses(item)"
+                :ui="editorButtonUi"
+                @click="emit('buttonClick', item.id)"
+            />
             <div
                 v-if="groupIndex < items.length - 1"
                 class="editor-toolbar__divider"
@@ -48,25 +36,14 @@ export interface IToolbarButton {
     isBold?: boolean
 }
 
-export interface IToolbarLinkPopover {
-    type: 'link-popover'
-    isActive: boolean
-    currentUrl?: string
-    isDisabled: boolean
-}
-
-type TToolbarItem = IToolbarButton | IToolbarLinkPopover
-
 interface IProps {
-    items: TToolbarItem[][]
+    items: IToolbarButton[][]
 }
 
 defineProps<IProps>()
 
 const emit = defineEmits<{
     buttonClick: [id: string]
-    setLink: [url: string]
-    removeLink: []
 }>()
 
 const getButtonClasses = (item: IToolbarButton) => {
