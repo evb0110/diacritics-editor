@@ -13,8 +13,11 @@
                 :disabled="item.isDisabled"
                 :class="getButtonClasses(item)"
                 :ui="editorButtonUi"
+                :style="item.text ? { fontSize: '1.25rem', minWidth: '2.5rem', display: 'inline-flex', justifyContent: 'center' } : undefined"
                 @click="emit('buttonClick', item.id)"
-            />
+            >
+                {{ item.text }}
+            </UButton>
             <div
                 v-if="groupIndex < items.length - 1"
                 class="editor-toolbar__divider"
@@ -30,7 +33,8 @@ import { editorButtonUi, getEditorButtonClasses } from '~/utils/editorButtonUi'
 export interface IToolbarButton {
     type: 'button'
     id: string
-    icon: string
+    icon?: string
+    text?: string
     isActive: boolean
     isDisabled: boolean
     isBold?: boolean

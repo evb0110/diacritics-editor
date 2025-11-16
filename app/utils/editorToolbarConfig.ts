@@ -1,7 +1,8 @@
 export interface IToolbarButtonConfig {
     type: 'button'
     id: string
-    icon: string
+    icon?: string
+    text?: string
     isBold?: boolean
 }
 
@@ -17,5 +18,8 @@ export const toolbarConfig: TToolbarItemConfig[][] = [
     [
         { type: 'button', id: 'undo', icon: 'tabler:arrow-back-up' },
         { type: 'button', id: 'redo', icon: 'tabler:arrow-forward-up' },
+    ],
+    [
+        { type: 'button', id: 'acuteAccent', text: 'á' },
     ],
 ]

@@ -85,6 +85,29 @@ const executeCommand = (buttonId: string, editor: Editor) => {
         strikethrough: () => editor.chain().focus().toggleStrike().run(),
         undo: () => editor.chain().focus().undo().run(),
         redo: () => editor.chain().focus().redo().run(),
+        acuteAccent: () => {
+            const { state } = editor
+            const { selection } = state
+            const { $from } = selection
+            const { doc } = state
+
+            const textBefore = doc.textBetween(Math.max(0, $from.pos - 1), $from.pos)
+
+            if (textBefore.length > 0 && !/\s/.test(textBefore)) {
+                const lastChar = textBefore
+                const withAccent = lastChar + '\u0301'
+                const normalized = withAccent.normalize('NFC')
+
+                const from = $from.pos - 1
+                const to = $from.pos
+
+                editor.chain()
+                    .focus()
+                    .deleteRange({ from, to })
+                    .insertContent(normalized)
+                    .run()
+            }
+        },
     }
 
     commands[buttonId as keyof typeof commands]?.()
@@ -98,6 +121,7 @@ const checkIsActive = (buttonId: string, editor: Editor): boolean => {
         strikethrough: () => editor.isActive('strike'),
         undo: () => false,
         redo: () => false,
+        acuteAccent: () => false,
     }
 
     return activeChecks[buttonId as keyof typeof activeChecks]?.() ?? false
@@ -107,6 +131,20 @@ const checkCanExecute = (buttonId: string, editor: Editor): boolean => {
     const canExecuteChecks = {
         undo: () => editor.can().chain().focus().undo().run(),
         redo: () => editor.can().chain().focus().redo().run(),
+        acuteAccent: () => {
+            const { state } = editor
+            const { selection } = state
+            const { $from } = selection
+            const { doc } = state
+
+            if ($from.pos === 0) {
+                return false
+            }
+
+            const textBefore = doc.textBetween(Math.max(0, $from.pos - 1), $from.pos)
+
+            return textBefore.length > 0 && !/\s/.test(textBefore)
+        },
     }
 
     return canExecuteChecks[buttonId as keyof typeof canExecuteChecks]?.() ?? true
@@ -117,6 +155,7 @@ const transformConfigItem = (config: TToolbarItemConfig): IToolbarButton => {
         type: 'button',
         id: config.id,
         icon: config.icon,
+        text: config.text,
         isActive: editor.value ? checkIsActive(config.id, editor.value) : false,
         isDisabled: !editor.value || !checkCanExecute(config.id, editor.value),
         isBold: config.isBold,
