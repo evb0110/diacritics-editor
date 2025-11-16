@@ -25,6 +25,6 @@ export const editorButtonInactiveClasses = [
     'aria-disabled:hover:!bg-transparent',
 ].join(' ')
 
-export function getEditorButtonClasses(isActive: boolean): string {
+export function getEditorButtonClasses(isActive: boolean) {
     return isActive ? editorButtonActiveClasses : editorButtonInactiveClasses
 }

@@ -121,27 +121,17 @@ type THeadingBlock = {
     segments: IRichTextSegment[]
 }
 
-type TBlockquoteBlock = {
-    type: 'blockquote'
-    segments: IRichTextSegment[]
-}
-
 type TListBlock = {
     type: 'list'
     ordered: boolean
     items: IRichTextSegment[][]
 }
 
-type TCodeBlock = {
-    type: 'code'
-    text: string
-}
-
 type TDividerBlock = {
     type: 'divider'
 }
 
-type TExportBlock = TParagraphBlock | THeadingBlock | TBlockquoteBlock | TListBlock | TCodeBlock | TDividerBlock
+type TExportBlock = TParagraphBlock | THeadingBlock | TListBlock | TDividerBlock
 
 const EXPORT_WRAPPER_CLASS = 'rior-export'
 
@@ -245,14 +235,6 @@ const buildHtmlExport = (htmlContent: string, colors: ExportColorValues, layout:
 }
 .${EXPORT_WRAPPER_CLASS}__content li {
     margin: 0.4em 0;
-}
-.${EXPORT_WRAPPER_CLASS}__content blockquote {
-    margin: ${layout.blockquoteSpacingY} 0;
-    padding: ${layout.blockquotePaddingY} ${layout.blockquotePaddingX};
-    border-left: ${layout.blockquoteBorderWidth} solid ${colors.blockquoteAccent};
-    background-color: ${colors.blockquoteBackground};
-    color: ${colors.blockquoteText};
-    font-style: italic;
 }
 .${EXPORT_WRAPPER_CLASS}__content pre {
     background-color: ${colors.codePanelBackground};
@@ -465,9 +447,6 @@ const collectExportBlocks = (html: string): TExportBlock[] => {
                     segments: extractRichTextSegments(element),
                 })
                 return
-            case 'blockquote':
-                blocks.push({ type: 'blockquote', segments: extractRichTextSegments(element) })
-                return
             case 'ul':
             case 'ol': {
                 const items = Array.from(element.children)
@@ -478,12 +457,6 @@ const collectExportBlocks = (html: string): TExportBlock[] => {
                 }
                 return
             }
-            case 'pre':
-                blocks.push({ type: 'code', text: extractRichTextSegments(element, { preserveWhitespace: true })[0]?.text ?? '' })
-                return
-            case 'code':
-                blocks.push({ type: 'code', text: (element.textContent ?? '').replace(/\r\n/g, '\n') })
-                return
             case 'hr':
                 blocks.push({ type: 'divider' })
                 return
@@ -611,10 +584,6 @@ const downloadDocx = async (blocks: TExportBlock[], filename: string, colors: Ex
 
     const docElements: Array<InstanceType<typeof Paragraph> | InstanceType<typeof Table>> = []
     const linkHex = colorToDocx(colors.link)
-    const cardBackgroundHex = colorToDocx(colors.cardBackground)
-    const blockquoteAccentHex = colorToDocx(colors.blockquoteAccent)
-    const blockquoteBackgroundHex = colorToDocx(colors.blockquoteBackground)
-    const codeBackgroundHex = colorToDocx(colors.codeBlockBackground)
     const dividerHex = colorToDocx(colors.divider)
 
     blocks.forEach((block) => {
@@ -634,67 +603,6 @@ const downloadDocx = async (blocks: TExportBlock[], filename: string, colors: Ex
                 }))
                 break
             }
-            case 'blockquote': {
-                const blockquoteParagraph = new Paragraph({
-                    children: createDocxRuns(block.segments, docxModule, { italic: true }, linkHex),
-                    spacing: { before: 0, after: 0 },
-                })
-
-                const blockquoteTable = new Table({
-                    width: { size: 100, type: WidthType.PERCENTAGE },
-                    columnWidths: [240, 9000],
-                    borders: {
-                        top: { style: BorderStyle.NONE, size: 0, color: cardBackgroundHex },
-                        right: { style: BorderStyle.NONE, size: 0, color: cardBackgroundHex },
-                        bottom: { style: BorderStyle.NONE, size: 0, color: cardBackgroundHex },
-                        left: { style: BorderStyle.NONE, size: 0, color: cardBackgroundHex },
-                        insideHorizontal: { style: BorderStyle.NONE, size: 0, color: cardBackgroundHex },
-                        insideVertical: { style: BorderStyle.NONE, size: 0, color: cardBackgroundHex },
-                    },
-                    rows: [
-                        new TableRow({
-                            cantSplit: true,
-                            children: [
-                                new TableCell({
-                                    width: { size: 240, type: WidthType.DXA },
-                                    shading: {
-                                        type: ShadingType.CLEAR,
-                                        color: blockquoteAccentHex,
-                                        fill: blockquoteAccentHex,
-                                    },
-                                    borders: {
-                                        top: { style: BorderStyle.NONE, size: 0, color: blockquoteAccentHex },
-                                        right: { style: BorderStyle.NONE, size: 0, color: blockquoteAccentHex },
-                                        bottom: { style: BorderStyle.NONE, size: 0, color: blockquoteAccentHex },
-                                        left: { style: BorderStyle.NONE, size: 0, color: blockquoteAccentHex },
-                                    },
-                                    margins: { top: 0, bottom: 0, left: 0, right: 0 },
-                                    children: [new Paragraph({})],
-                                }),
-                                new TableCell({
-                                    shading: {
-                                        type: ShadingType.CLEAR,
-                                        color: blockquoteBackgroundHex,
-                                        fill: blockquoteBackgroundHex,
-                                    },
-                                    borders: {
-                                        top: { style: BorderStyle.NONE, size: 0, color: blockquoteBackgroundHex },
-                                        right: { style: BorderStyle.NONE, size: 0, color: blockquoteBackgroundHex },
-                                        bottom: { style: BorderStyle.NONE, size: 0, color: blockquoteBackgroundHex },
-                                        left: { style: BorderStyle.NONE, size: 0, color: blockquoteBackgroundHex },
-                                    },
-                                    margins: { top: 200, bottom: 200, left: 320, right: 320 },
-                                    children: [blockquoteParagraph],
-                                }),
-                            ],
-                        }),
-                    ],
-                })
-
-                docElements.push(blockquoteTable)
-                docElements.push(new Paragraph({ spacing: { after: 200 } }))
-                break
-            }
             case 'list':
                 block.items.forEach((item) => {
                     docElements.push(new Paragraph({
@@ -706,17 +614,6 @@ const downloadDocx = async (blocks: TExportBlock[], filename: string, colors: Ex
                         spacing: { after: 120 },
                     }))
                 })
-                break
-            case 'code':
-                docElements.push(new Paragraph({
-                    children: createDocxRuns([{ text: block.text || '' }], docxModule, {}, linkHex),
-                    shading: {
-                        type: ShadingType.CLEAR,
-                        color: codeBackgroundHex,
-                        fill: codeBackgroundHex,
-                    },
-                    spacing: { before: 120, after: 200 },
-                }))
                 break
             case 'divider':
                 docElements.push(new Paragraph({
@@ -828,11 +725,6 @@ const downloadPdf = async (blocks: TExportBlock[], filename: string, colors: Exp
         text: colorToPdf(pdfLib, colors.text),
         link: colorToPdf(pdfLib, colors.link),
         divider: colorToPdf(pdfLib, colors.divider),
-        blockquoteAccent: colorToPdf(pdfLib, colors.blockquoteAccent),
-        blockquoteBackground: colorToPdf(pdfLib, colors.blockquoteBackground),
-        blockquoteText: colorToPdf(pdfLib, colors.blockquoteText),
-        codeBlockBackground: colorToPdf(pdfLib, colors.codeBlockBackground),
-        codeBlockText: colorToPdf(pdfLib, colors.codeBlockText),
     }
 
     const defaultColor = pdfColorMap.text
@@ -1158,72 +1050,6 @@ const downloadPdf = async (blocks: TExportBlock[], filename: string, colors: Exp
         cursorY -= 16
     }
 
-    const drawBlockquote = (segments: IRichTextSegment[]) => {
-        const accentWidth = 8
-        const innerPadding = 18
-
-        drawRichTextParagraph(segments, {
-            indent: accentWidth + innerPadding,
-            spacingBefore: 12,
-            spacingAfter: 18,
-            lineHeight: 18,
-            paddingTop: 10,
-            paddingBottom: 10,
-            color: pdfColorMap.blockquoteText,
-            defaultStyle: { italic: true },
-            onBeforeDraw: ({ height, top, contentWidth }) => {
-                const blockY = top - height
-                const maxBgWidth = Math.max(0, maxWidth - accentWidth - innerPadding)
-                const bgWidth = Math.min(contentWidth + innerPadding * 2, maxBgWidth)
-                page.drawRectangle({
-                    x: margin + accentWidth,
-                    y: blockY,
-                    width: bgWidth,
-                    height,
-                    color: pdfColorMap.blockquoteBackground,
-                })
-                page.drawRectangle({
-                    x: margin,
-                    y: blockY,
-                    width: accentWidth,
-                    height,
-                    color: pdfColorMap.blockquoteAccent,
-                })
-            },
-        })
-    }
-
-    const drawCodeBlock = (text: string) => {
-        const fontSize = 11
-        const lineHeight = 15
-        const padding = 10
-        const contentLines = text.replace(/\r\n/g, '\n').split('\n')
-        const blockHeight = Math.max(lineHeight, contentLines.length * lineHeight + padding * 2)
-        ensureSpace(blockHeight + 12)
-
-        page.drawRectangle({
-            x: margin,
-            y: cursorY - blockHeight + padding,
-            width: maxWidth,
-            height: blockHeight,
-            color: pdfColorMap.codeBlockBackground,
-        })
-
-        let textY = cursorY - padding
-        contentLines.forEach((line) => {
-            page.drawText(line, {
-                x: margin + padding,
-                y: textY,
-                font: fonts.mono,
-                size: fontSize,
-                color: pdfColorMap.codeBlockText,
-            })
-            textY -= lineHeight
-        })
-
-        cursorY = textY - 12
-    }
-
     blocks.forEach((block) => {
         switch (block.type) {
             case 'paragraph':
@@ -1239,9 +1065,6 @@ const downloadPdf = async (blocks: TExportBlock[], filename: string, colors: Exp
                 })
                 break
             }
-            case 'blockquote':
-                drawBlockquote(block.segments)
-                break
             case 'list': {
                 block.items.forEach((item, index) => {
                     drawRichTextParagraph(item, {
@@ -1253,9 +1076,6 @@ const downloadPdf = async (blocks: TExportBlock[], filename: string, colors: Exp
                 cursorY -= 4
                 break
             }
-            case 'code':
-                drawCodeBlock(block.text)
-                break
             case 'divider':
                 drawDivider()
                 break

@@ -26,7 +26,7 @@ const currentTheme = computed(() => {
 })
 
 const icon = computed(() => {
-    return currentTheme.value === 'dark' ? 'lucide:sun' : 'lucide:moon'
+    return currentTheme.value === 'dark' ? 'tabler:sun' : 'tabler:moon'
 })
 
 const tooltip = computed(() => {

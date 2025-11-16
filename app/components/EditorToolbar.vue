@@ -69,7 +69,7 @@ const emit = defineEmits<{
     removeLink: []
 }>()
 
-const getButtonClasses = (item: IToolbarButton): string => {
+const getButtonClasses = (item: IToolbarButton) => {
     const classes = ['editor-toolbar__button']
 
     if (item.isBold) {
@@ -92,7 +92,7 @@ const getButtonClasses = (item: IToolbarButton): string => {
 }
 
 .editor-toolbar__button--bold :deep(svg path) {
-    stroke-width: 3.5;
+    stroke-width: 3;
 }
 
 .editor-toolbar__divider {

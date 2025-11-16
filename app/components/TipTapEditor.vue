@@ -85,12 +85,6 @@ const executeCommand = (buttonId: string, editor: Editor) => {
         italic: () => editor.chain().focus().toggleItalic().run(),
         underline: () => editor.chain().focus().toggleUnderline().run(),
         strikethrough: () => editor.chain().focus().toggleStrike().run(),
-        heading1: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
-        heading2: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
-        bulletList: () => editor.chain().focus().toggleBulletList().run(),
-        orderedList: () => editor.chain().focus().toggleOrderedList().run(),
-        blockquote: () => editor.chain().focus().toggleBlockquote().run(),
-        codeBlock: () => editor.chain().focus().toggleCodeBlock().run(),
         undo: () => editor.chain().focus().undo().run(),
         redo: () => editor.chain().focus().redo().run(),
     }
@@ -104,12 +98,6 @@ const checkIsActive = (buttonId: string, editor: Editor): boolean => {
         italic: () => editor.isActive('italic'),
         underline: () => editor.isActive('underline'),
         strikethrough: () => editor.isActive('strike'),
-        heading1: () => editor.isActive('heading', { level: 1 }),
-        heading2: () => editor.isActive('heading', { level: 2 }),
-        bulletList: () => editor.isActive('bulletList'),
-        orderedList: () => editor.isActive('orderedList'),
-        blockquote: () => editor.isActive('blockquote'),
-        codeBlock: () => editor.isActive('codeBlock'),
         undo: () => false,
         redo: () => false,
     }
@@ -218,26 +206,6 @@ const handleRemoveLink = () => {
     margin-bottom: 0.5rem;
 }
 
-.tiptap :deep(ul) {
-    list-style-type: disc;
-    margin-top: var(--editor-list-margin);
-    margin-bottom: var(--editor-list-margin);
-    padding-left: var(--editor-list-indent);
-}
-
-.tiptap :deep(ol) {
-    list-style-type: decimal;
-    margin-top: var(--editor-list-margin);
-    margin-bottom: var(--editor-list-margin);
-    padding-left: var(--editor-list-indent);
-}
-
-.tiptap :deep(li) {
-    margin-top: var(--editor-list-item-margin);
-    margin-bottom: var(--editor-list-item-margin);
-    display: list-item;
-}
-
 .tiptap :deep(a) {
     color: var(--link-color);
     text-decoration: underline;
@@ -273,14 +241,6 @@ const handleRemoveLink = () => {
     background-color: transparent;
     padding: 0;
     color: inherit;
-}
-
-.tiptap :deep(blockquote) {
-    border-left: var(--editor-blockquote-border-width) solid var(--workspace-border-strong);
-    padding-left: var(--editor-blockquote-padding-left);
-    font-style: italic;
-    margin-top: var(--editor-blockquote-spacing);
-    margin-bottom: var(--editor-blockquote-spacing);
 }
 
 .tiptap :deep(table) {
