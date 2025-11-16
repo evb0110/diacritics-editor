@@ -1,0 +1,64 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+@theme {
+  --font-sans: var(--font-family-base, system-ui, sans-serif);
+  --color-surface-app: var(--surface-app);
+  --color-surface-card: var(--surface-card);
+  --color-surface-muted: var(--surface-muted);
+  --color-workspace-bg: var(--workspace-bg);
+  --color-workspace-muted: var(--workspace-muted);
+  --color-workspace-text: var(--workspace-text);
+  --color-workspace-muted-text: var(--workspace-muted-text);
+  --color-workspace-border: var(--workspace-border);
+  --color-workspace-border-strong: var(--workspace-border-strong);
+  --color-brand: var(--color-brand-600);
+  --color-muted: var(--text-muted);
+  --color-link: var(--link-color);
+}
+
+:root {
+  --editor-pane-height: 32rem;
+}
+
+code {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.ghost-button-hover {
+  transition: box-shadow 150ms ease;
+}
+
+.ghost-button-hover:not(:disabled):not([aria-disabled='true']):is(:hover, :focus-visible, :active) {
+  box-shadow: 0 0 0 9999px var(--button-ghost-hover-bg) inset;
+}
+
+.ghost-button-hover:is(:disabled, [aria-disabled='true']):is(:hover, :focus-visible, :active) {
+  box-shadow: none;
+}
+
+@layer utilities {
+  .app-shell-bg {
+    background-image: var(--layout-background-gradient);
+    background-color: var(--surface-app);
+  }
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --editor-pane-height: 17rem;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --editor-pane-height: 13rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --editor-pane-height: 34rem;
+  }
+}

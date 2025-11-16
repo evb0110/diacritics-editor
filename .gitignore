@@ -1,0 +1,14 @@
+.nuxt/
+.output/
+dist/
+node_modules/
+.DS_Store
+.idea/
+.vscode/
+*.swp
+.env
+.env.local
+/.playwright-mcp/
+/.playwright-mcp/
+.vercel
+/.devkit/

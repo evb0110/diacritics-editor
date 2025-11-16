@@ -1,0 +1,51 @@
+{
+  "name": "diacritics-editor",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "preview": "nuxt preview",
+    "lint": "eslint . --fix",
+    "typecheck": "nuxi typecheck"
+  },
+  "dependencies": {
+    "@nuxt/eslint": "1.9.0",
+    "@nuxt/ui": "4.0.0",
+    "@pdf-lib/fontkit": "^1.1.1",
+    "@tiptap/core": "^2.4.0",
+    "@tiptap/extension-highlight": "^2.4.0",
+    "@tiptap/extension-image": "^2.4.0",
+    "@tiptap/extension-link": "^2.4.0",
+    "@tiptap/extension-placeholder": "^2.4.0",
+    "@tiptap/extension-table": "^2.4.0",
+    "@tiptap/extension-table-cell": "^2.4.0",
+    "@tiptap/extension-table-header": "^2.4.0",
+    "@tiptap/extension-table-row": "^2.4.0",
+    "@tiptap/extension-underline": "^2.4.0",
+    "@tiptap/starter-kit": "^2.4.0",
+    "@tiptap/vue-3": "^2.4.0",
+    "@types/js-beautify": "^1.14.3",
+    "@vueuse/core": "11.1.0",
+    "docx": "^9.5.1",
+    "eslint": "^9.36.0",
+    "idb": "^8.0.0",
+    "js-beautify": "^1.14.11",
+    "nuxt": "^4.1.2",
+    "pdf-lib": "^1.17.1",
+    "typescript": "^5.9.3",
+    "vue": "^3.5.22"
+  },
+  "devDependencies": {
+    "@iconify-json/heroicons": "^1.2.3",
+    "@iconify-json/lucide": "^1.2.69",
+    "@iconify-json/tabler": "^1.2.23",
+    "@types/node": "^24.6.2",
+    "eslint-plugin-import": "^2.32.0",
+    "prettier": "^3.6.2",
+    "sass-embedded": "^1.93.3",
+    "tailwindcss": "^4.1.14",
+    "vite-plugin-mkcert": "^1.17.9",
+    "vue-tsc": "^3.1.1"
+  }
+}
