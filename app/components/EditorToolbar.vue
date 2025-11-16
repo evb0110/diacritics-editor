@@ -13,7 +13,7 @@
                 :disabled="item.isDisabled"
                 :class="getButtonClasses(item)"
                 :ui="editorButtonUi"
-                :style="item.text ? { fontSize: '1.25rem', minWidth: '2.5rem', display: 'inline-flex', justifyContent: 'center' } : undefined"
+                :style="item.text ? { fontSize: '1.25rem', minWidth: '2.5rem', display: 'inline-flex', justifyContent: 'center', fontFamily: 'Helvetica' } : undefined"
                 @click="emit('buttonClick', item.id)"
             >
                 {{ item.text }}

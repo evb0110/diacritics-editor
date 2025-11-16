@@ -77,7 +77,55 @@ whenever(() => editor.value?.getJSON(), () => {
     })
 }, { deep: true })
 
+const diacriticMap: Record<string, string> = {
+    graveAccent: '\u0300',
+    acuteAccent: '\u0301',
+    circumflexAccent: '\u0302',
+    tildeAccent: '\u0303',
+    diaeresisAccent: '\u0308',
+    macronAccent: '\u0304',
+    breveAccent: '\u0306',
+    invertedBreveAccent: '\u0311',
+    dotAboveAccent: '\u0307',
+    ringAboveAccent: '\u030A',
+    caronAccent: '\u030C',
+    dotBelowAccent: '\u0323',
+    macronBelowAccent: '\u0331',
+    ringBelowAccent: '\u0325',
+    cedillaAccent: '\u0327',
+    circumflexBelowAccent: '\u032D',
+}
+
+const applyDiacritic = (editor: Editor, combiningChar: string) => {
+    const { state } = editor
+    const { selection } = state
+    const { $from } = selection
+    const { doc } = state
+
+    const textBefore = doc.textBetween(Math.max(0, $from.pos - 1), $from.pos)
+
+    if (textBefore.length > 0 && !/\s/.test(textBefore)) {
+        const lastChar = textBefore
+        const withAccent = lastChar + combiningChar
+        const normalized = withAccent.normalize('NFC')
+
+        const from = $from.pos - 1
+        const to = $from.pos
+
+        editor.chain()
+            .focus()
+            .deleteRange({ from, to })
+            .insertContent(normalized)
+            .run()
+    }
+}
+
 const executeCommand = (buttonId: string, editor: Editor) => {
+    if (diacriticMap[buttonId]) {
+        applyDiacritic(editor, diacriticMap[buttonId])
+        return
+    }
+
     const commands = {
         bold: () => editor.chain().focus().toggleBold().run(),
         italic: () => editor.chain().focus().toggleItalic().run(),
@@ -85,35 +133,16 @@ const executeCommand = (buttonId: string, editor: Editor) => {
         strikethrough: () => editor.chain().focus().toggleStrike().run(),
         undo: () => editor.chain().focus().undo().run(),
         redo: () => editor.chain().focus().redo().run(),
-        acuteAccent: () => {
-            const { state } = editor
-            const { selection } = state
-            const { $from } = selection
-            const { doc } = state
-
-            const textBefore = doc.textBetween(Math.max(0, $from.pos - 1), $from.pos)
-
-            if (textBefore.length > 0 && !/\s/.test(textBefore)) {
-                const lastChar = textBefore
-                const withAccent = lastChar + '\u0301'
-                const normalized = withAccent.normalize('NFC')
-
-                const from = $from.pos - 1
-                const to = $from.pos
-
-                editor.chain()
-                    .focus()
-                    .deleteRange({ from, to })
-                    .insertContent(normalized)
-                    .run()
-            }
-        },
     }
 
     commands[buttonId as keyof typeof commands]?.()
 }
 
 const checkIsActive = (buttonId: string, editor: Editor): boolean => {
+    if (diacriticMap[buttonId]) {
+        return false
+    }
+
     const activeChecks = {
         bold: () => editor.isActive('bold'),
         italic: () => editor.isActive('italic'),
@@ -121,30 +150,34 @@ const checkIsActive = (buttonId: string, editor: Editor): boolean => {
         strikethrough: () => editor.isActive('strike'),
         undo: () => false,
         redo: () => false,
-        acuteAccent: () => false,
     }
 
     return activeChecks[buttonId as keyof typeof activeChecks]?.() ?? false
 }
 
+const canApplyDiacritic = (editor: Editor): boolean => {
+    const { state } = editor
+    const { selection } = state
+    const { $from } = selection
+    const { doc } = state
+
+    if ($from.pos === 0) {
+        return false
+    }
+
+    const textBefore = doc.textBetween(Math.max(0, $from.pos - 1), $from.pos)
+
+    return textBefore.length > 0 && !/\s/.test(textBefore)
+}
+
 const checkCanExecute = (buttonId: string, editor: Editor): boolean => {
+    if (diacriticMap[buttonId]) {
+        return canApplyDiacritic(editor)
+    }
+
     const canExecuteChecks = {
         undo: () => editor.can().chain().focus().undo().run(),
         redo: () => editor.can().chain().focus().redo().run(),
-        acuteAccent: () => {
-            const { state } = editor
-            const { selection } = state
-            const { $from } = selection
-            const { doc } = state
-
-            if ($from.pos === 0) {
-                return false
-            }
-
-            const textBefore = doc.textBetween(Math.max(0, $from.pos - 1), $from.pos)
-
-            return textBefore.length > 0 && !/\s/.test(textBefore)
-        },
     }
 
     return canExecuteChecks[buttonId as keyof typeof canExecuteChecks]?.() ?? true
