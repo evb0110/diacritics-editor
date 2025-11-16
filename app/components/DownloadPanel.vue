@@ -3,7 +3,7 @@
         <template #header>
             <div class="download-panel__header">
                 <div class="flex items-center gap-4">
-                    <UIcon name="lucide:download" />
+                    <UIcon name="tabler:download" />
                     <span class="download-panel__title font-semibold text-workspace-text">
                         Export
                     </span>
@@ -44,10 +44,10 @@ interface IFormatOption {
 }
 
 const formatOptions: IFormatOption[] = [
-    { key: 'docx', label: 'DOCX', icon: 'lucide:file-down' },
-    { key: 'pdf', label: 'PDF', icon: 'lucide:file-text' },
-    { key: 'json', label: 'JSON', icon: 'lucide:braces' },
-    { key: 'html', label: 'HTML', icon: 'lucide:code' },
+    { key: 'docx', label: 'DOCX', icon: 'tabler:file-download' },
+    { key: 'pdf', label: 'PDF', icon: 'tabler:file-text' },
+    { key: 'json', label: 'JSON', icon: 'tabler:braces' },
+    { key: 'html', label: 'HTML', icon: 'tabler:code' },
 ]
 
 const { content } = useArticleStorage()

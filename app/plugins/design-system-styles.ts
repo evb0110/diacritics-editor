@@ -4,7 +4,7 @@ export default defineNuxtPlugin(() => {
     useHead({
         style: [
             {
-                key: 'rior-design-system',
+                key: 'diacritics-design-system',
                 innerHTML: designSystemCss,
             },
         ],

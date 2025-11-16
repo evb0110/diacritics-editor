@@ -45,12 +45,12 @@ export const useArticleStorage = createGlobalState(() => {
             timestamp: Date.now(),
         }
 
-        await IDB.set('riorpub', 'articles', key, article)
+        await IDB.set('diacritics-editor', 'articles', key, article)
     }
 
-    const loadArticle = async (): Promise<void> => {
+    const loadArticle = async () => {
         try {
-            const saved = await IDB.get('riorpub', 'articles', key)
+            const saved = await IDB.get('diacritics-editor', 'articles', key)
             if (saved && typeof saved === 'object' && 'json' in saved && saved.json && typeof saved.json === 'object') {
                 content.value = { json: saved.json as Record<string, unknown>, html: '' }
             }

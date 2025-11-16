@@ -36,13 +36,13 @@ const contentHtml = useArticleContent('html')
 
 const codeDisplays = computed<ICodeDisplay[]>(() => [
     {
-        icon: 'lucide:braces',
+        icon: 'tabler:braces',
         title: 'JSON',
         code: contentJson.value,
         language: 'json',
     },
     {
-        icon: 'lucide:code',
+        icon: 'tabler:code',
         title: 'HTML',
         code: contentHtml.value,
         language: 'html',

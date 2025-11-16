@@ -121,12 +121,12 @@ const highlightedCode = computed(() => {
 const buttons = computed(() => [
     {
         key: 'copy',
-        icon: isCopying.value ? 'lucide:check' : 'lucide:copy',
+        icon: isCopying.value ? 'tabler:check' : 'tabler:copy',
         title: `Copy ${title}`,
     },
     {
         key: 'format',
-        icon: isFormatted.value ? 'lucide:minimize-2' : 'lucide:maximize-2',
+        icon: isFormatted.value ? 'tabler:arrows-minimize' : 'tabler:arrows-maximize',
         title: isFormatted.value ? 'Minify' : 'Format',
     },
 ])

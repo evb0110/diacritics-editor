@@ -133,7 +133,7 @@ type TDividerBlock = {
 
 type TExportBlock = TParagraphBlock | THeadingBlock | TListBlock | TDividerBlock
 
-const EXPORT_WRAPPER_CLASS = 'rior-export'
+const EXPORT_WRAPPER_CLASS = 'diacritics-export'
 
 const PDF_FONT_URLS = {
     regular: fontRegularUrl,
@@ -271,7 +271,7 @@ const buildHtmlExport = (htmlContent: string, colors: ExportColorValues, layout:
     <div class="${EXPORT_WRAPPER_CLASS}__container">
         <div>
             <h1 class="${EXPORT_WRAPPER_CLASS}__title">HTML Content</h1>
-            <p class="${EXPORT_WRAPPER_CLASS}__subtitle">Generated with RiorPub</p>
+            <p class="${EXPORT_WRAPPER_CLASS}__subtitle">Generated with Diacritics Editor</p>
         </div>
         <div class="${EXPORT_WRAPPER_CLASS}__content">
 ${beautified}
