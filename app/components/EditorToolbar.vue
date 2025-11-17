@@ -68,8 +68,8 @@ const getButtonClasses = (item: IToolbarButton) => {
     border-left: none;
     border-right: none;
     border-top: none;
-    padding: var(--workspace-card-header-padding-y) var(--workspace-card-header-padding-x);
-    min-height: var(--workspace-card-header-min-height);
+    padding: 0;
+    min-height: auto;
 }
 
 .editor-toolbar__button--bold :deep(svg path) {

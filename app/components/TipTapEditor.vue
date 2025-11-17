@@ -406,4 +406,22 @@ const handleDownload = async (format: TExportFormat) => {
     gap: 0.5rem;
     margin-left: auto;
 }
+
+@media (max-width: 640px) {
+    .editor-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .header-divider {
+        display: none;
+    }
+
+    .export-buttons {
+        margin-left: 0;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+}
 </style>

@@ -17,10 +17,6 @@
   --color-link: var(--link-color);
 }
 
-:root {
-  --editor-pane-height: 32rem;
-}
-
 code {
   white-space: pre-wrap;
   word-break: break-word;
@@ -42,23 +38,5 @@ code {
   .app-shell-bg {
     background-image: var(--layout-background-gradient);
     background-color: var(--surface-app);
-  }
-}
-
-@media (max-width: 1024px) {
-  :root {
-    --editor-pane-height: 17rem;
-  }
-}
-
-@media (max-width: 640px) {
-  :root {
-    --editor-pane-height: 13rem;
-  }
-}
-
-@media (min-width: 1280px) {
-  :root {
-    --editor-pane-height: 34rem;
   }
 }
