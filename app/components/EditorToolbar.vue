@@ -2,7 +2,7 @@
     <div class="editor-toolbar">
         <div class="editor-toolbar__group editor-toolbar__group--main">
             <template
-                v-for="(group, groupIndex) in items.slice(0, 3)"
+                v-for="(group, groupIndex) in mainGroups"
                 :key="groupIndex"
             >
                 <UButton
@@ -20,7 +20,7 @@
                     {{ item.text }}
                 </UButton>
                 <div
-                    v-if="groupIndex < 2"
+                    v-if="groupIndex < mainGroups.length - 1"
                     class="editor-toolbar__divider"
                     aria-hidden="true"
                 />
@@ -33,11 +33,11 @@
         />
 
         <div
-            v-if="items[3]"
+            v-if="diacriticsGroup.length > 0"
             class="editor-toolbar__group editor-toolbar__group--diacritics"
         >
             <UButton
-                v-for="(item, itemIndex) in items[3]"
+                v-for="(item, itemIndex) in diacriticsGroup"
                 :key="itemIndex"
                 :icon="item.icon"
                 :color="item.isActive ? 'primary' : 'neutral'"
@@ -68,7 +68,8 @@ export interface IToolbarButton {
 }
 
 interface IProps {
-    items: IToolbarButton[][]
+    mainGroups: IToolbarButton[][]
+    diacriticsGroup: IToolbarButton[]
 }
 
 defineProps<IProps>()
@@ -114,12 +115,13 @@ const getButtonClasses = (item: IToolbarButton) => {
     border-left: none;
     border-right: none;
     border-top: none;
-    padding: 0 var(--workspace-card-header-padding-x);
+    padding: 0;
     min-height: var(--workspace-card-header-min-height);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem;
+    width: 100%;
 }
 
 .editor-toolbar__group {
@@ -129,7 +131,9 @@ const getButtonClasses = (item: IToolbarButton) => {
 }
 
 .editor-toolbar__group--main {
-    flex-shrink: 0;
+    flex-shrink: 1;
+    flex-wrap: wrap;
+    min-width: 0;
 }
 
 .editor-toolbar__group--diacritics {

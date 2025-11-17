@@ -4,7 +4,8 @@
             <template #header>
                 <div class="editor-header">
                     <EditorToolbar
-                        :items="toolbarItems"
+                        :main-groups="toolbarItems.mainGroups"
+                        :diacritics-group="toolbarItems.diacriticsGroup"
                         @button-click="handleButtonClick"
                     />
                 </div>
@@ -232,7 +233,10 @@ const transformConfigItem = (config: TToolbarItemConfig): IToolbarButton => {
 }
 
 const toolbarItems = computed(() => {
-    return toolbarConfig.map(group => group.map(transformConfigItem))
+    return {
+        mainGroups: toolbarConfig.mainGroups.map(group => group.map(transformConfigItem)),
+        diacriticsGroup: toolbarConfig.diacriticsGroup.map(transformConfigItem),
+    }
 })
 
 const handleButtonClick = (buttonId: string) => {
@@ -364,6 +368,7 @@ const handleButtonClick = (buttonId: string) => {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    overflow: visible;
 }
 
 .editor-header {
@@ -372,5 +377,6 @@ const handleButtonClick = (buttonId: string) => {
     padding: var(--workspace-card-header-padding-y) var(--workspace-card-header-padding-x);
     min-height: var(--workspace-card-header-min-height);
     padding-top: 0.5rem;
+    overflow: visible;
 }
 </style>

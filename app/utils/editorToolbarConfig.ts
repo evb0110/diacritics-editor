@@ -8,28 +8,35 @@ export interface IToolbarButtonConfig {
 
 export type TToolbarItemConfig = IToolbarButtonConfig
 
-export const toolbarConfig: TToolbarItemConfig[][] = [
-    [
-        { type: 'button', id: 'bold', icon: 'tabler:bold', isBold: true },
-        { type: 'button', id: 'italic', icon: 'tabler:italic' },
-        { type: 'button', id: 'underline', icon: 'tabler:underline' },
-        { type: 'button', id: 'strikethrough', icon: 'tabler:strikethrough' },
-        { type: 'button', id: 'smallCaps', text: 'ᴋ' },
+export interface IToolbarConfig {
+    mainGroups: TToolbarItemConfig[][]
+    diacriticsGroup: TToolbarItemConfig[]
+}
+
+export const toolbarConfig: IToolbarConfig = {
+    mainGroups: [
+        [
+            { type: 'button', id: 'bold', icon: 'tabler:bold', isBold: true },
+            { type: 'button', id: 'italic', icon: 'tabler:italic' },
+            { type: 'button', id: 'underline', icon: 'tabler:underline' },
+            { type: 'button', id: 'strikethrough', icon: 'tabler:strikethrough' },
+            { type: 'button', id: 'smallCaps', text: 'ᴋ' },
+        ],
+        [
+            { type: 'button', id: 'undo', icon: 'tabler:arrow-back-up' },
+            { type: 'button', id: 'redo', icon: 'tabler:arrow-forward-up' },
+        ],
+        [
+            { type: 'button', id: 'glottalStop', text: 'Ɂ' },
+            { type: 'button', id: 'pharyngealFricative', text: 'ʕ' },
+            { type: 'button', id: 'sharpS', text: 'ß' },
+            { type: 'button', id: 'ae', text: 'æ' },
+            { type: 'button', id: 'schwa', text: 'ə' },
+            { type: 'button', id: 'undertie', text: '‿' },
+            { type: 'button', id: 'squareRoot', text: '√' },
+        ],
     ],
-    [
-        { type: 'button', id: 'undo', icon: 'tabler:arrow-back-up' },
-        { type: 'button', id: 'redo', icon: 'tabler:arrow-forward-up' },
-    ],
-    [
-        { type: 'button', id: 'glottalStop', text: 'Ɂ' },
-        { type: 'button', id: 'pharyngealFricative', text: 'ʕ' },
-        { type: 'button', id: 'sharpS', text: 'ß' },
-        { type: 'button', id: 'ae', text: 'æ' },
-        { type: 'button', id: 'schwa', text: 'ə' },
-        { type: 'button', id: 'undertie', text: '‿' },
-        { type: 'button', id: 'squareRoot', text: '√' },
-    ],
-    [
+    diacriticsGroup: [
         { type: 'button', id: 'graveAccent', text: 'à' },
         { type: 'button', id: 'acuteAccent', text: 'á' },
         { type: 'button', id: 'circumflexAccent', text: 'â' },
@@ -48,4 +55,4 @@ export const toolbarConfig: TToolbarItemConfig[][] = [
         { type: 'button', id: 'circumflexBelowAccent', text: 'a̭' },
         { type: 'button', id: 'breveBelowAccent', text: 'a̮' },
     ],
-]
+}

@@ -18,12 +18,14 @@
     flex-direction: column;
     min-height: 0;
     height: 100%;
-    overflow: hidden;
+    overflow-x: visible;
+    overflow-y: hidden;
 }
 
 .workspace-card__section {
     background-color: var(--workspace-muted);
     border-bottom: var(--border-width) solid var(--workspace-border);
+    overflow: visible;
 }
 
 .workspace-card__body {
