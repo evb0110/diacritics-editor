@@ -1,10 +1,29 @@
 <template>
     <WorkspaceCard>
         <template #header>
-            <EditorToolbar
-                :items="toolbarItems"
-                @button-click="handleButtonClick"
-            />
+            <div class="editor-header">
+                <EditorToolbar
+                    :items="toolbarItems"
+                    @button-click="handleButtonClick"
+                />
+                <div class="header-divider" />
+                <div class="export-buttons">
+                    <UButton
+                        v-for="option in formatOptions"
+                        :key="option.key"
+                        :icon="option.icon"
+                        color="neutral"
+                        variant="ghost"
+                        size="sm"
+                        :loading="activeFormat === option.key && isDownloading"
+                        :disabled="isDownloading"
+                        :class="ghostButtonHoverClasses"
+                        @click="handleDownload(option.key)"
+                    >
+                        {{ option.label }}
+                    </UButton>
+                </div>
+            </div>
         </template>
         <div class="editor-wrapper flex flex-1 p-4 lg:p-5 overflow-y-auto">
             <SkeletonList
@@ -33,6 +52,22 @@ import { useArticleStorage } from '~/composables/useArticleStorage'
 import { whenever } from '@vueuse/core'
 import { toolbarConfig, type TToolbarItemConfig } from '~/utils/editorToolbarConfig'
 import type { IToolbarButton } from '~/components/EditorToolbar.vue'
+import type { TExportFormat } from '~/utils/downloadArticle'
+import { downloadArticle } from '~/utils/downloadArticle'
+import { ghostButtonHoverClasses } from '~/utils/ghostButtonUi'
+
+interface IFormatOption {
+    key: TExportFormat
+    label: string
+    icon: string
+}
+
+const formatOptions: IFormatOption[] = [
+    { key: 'docx', label: 'DOCX', icon: 'tabler:file-download' },
+    { key: 'pdf', label: 'PDF', icon: 'tabler:file-text' },
+    { key: 'json', label: 'JSON', icon: 'tabler:braces' },
+    { key: 'html', label: 'HTML', icon: 'tabler:code' },
+]
 
 const { content, isLoading } = useArticleStorage()
 
@@ -204,6 +239,34 @@ const handleButtonClick = (buttonId: string) => {
         executeCommand(buttonId, editor.value)
     }
 }
+
+const snapshot = computed(() => ({
+    json: content.value?.json ?? {},
+    html: content.value?.html ?? '<p></p>',
+}))
+
+const isDownloading = ref(false)
+const activeFormat = ref<TExportFormat | null>(null)
+
+const handleDownload = async (format: TExportFormat) => {
+    if (isDownloading.value) return
+    try {
+        isDownloading.value = true
+        activeFormat.value = format
+        await downloadArticle({
+            format,
+            snapshot: snapshot.value,
+            filename: 'article',
+        })
+    }
+    catch (error) {
+        console.error('Failed to download file:', error)
+    }
+    finally {
+        isDownloading.value = false
+        activeFormat.value = null
+    }
+}
 </script>
 
 <style scoped>
@@ -225,6 +288,7 @@ const handleButtonClick = (buttonId: string) => {
     flex: 1;
     outline: none;
     min-height: 100%;
+    font-family: Helvetica, Arial, sans-serif;
 }
 
 .tiptap :deep(h1) {
@@ -320,5 +384,26 @@ const handleButtonClick = (buttonId: string) => {
     margin-top: var(--editor-divider-spacing);
     margin-bottom: var(--editor-divider-spacing);
     border-top: var(--border-width) solid var(--workspace-border-strong);
+}
+
+.editor-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: var(--workspace-card-header-padding-y) var(--workspace-card-header-padding-x);
+    min-height: var(--workspace-card-header-min-height);
+}
+
+.header-divider {
+    width: 1px;
+    height: 2rem;
+    background-color: var(--workspace-border);
+    flex-shrink: 0;
+}
+
+.export-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
 }
 </style>
