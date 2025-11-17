@@ -1,10 +1,12 @@
 <template>
     <div class="space-y-4 w-full">
-        <USkeleton
-            v-for="(skeleton, index) in skeletons"
-            :key="index"
-            :class="[skeleton.height, skeleton.width]"
-        />
+        <ClientOnly>
+            <USkeleton
+                v-for="(skeleton, index) in skeletons"
+                :key="index"
+                :class="[skeleton.height, skeleton.width]"
+            />
+        </ClientOnly>
     </div>
 </template>
 
