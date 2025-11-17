@@ -9,6 +9,7 @@ import TableHeader from '@tiptap/extension-table-header'
 import TableCell from '@tiptap/extension-table-cell'
 import Underline from '@tiptap/extension-underline'
 import Highlight from '@tiptap/extension-highlight'
+import { SmallCaps } from '~/utils/smallCapsExtension'
 
 export const useTipTapEditor = ({
     content = '<p></p>',
@@ -26,6 +27,7 @@ export const useTipTapEditor = ({
             TableCell,
             Underline,
             Highlight.configure({ multicolor: true }),
+            SmallCaps,
             Placeholder.configure({ placeholder }),
         ],
         content: json || content,

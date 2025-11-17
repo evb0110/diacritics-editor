@@ -23,6 +23,11 @@ export const toolbarConfig: TToolbarItemConfig[][] = [
     [
         { type: 'button', id: 'glottalStop', text: 'Ɂ' },
         { type: 'button', id: 'pharyngealFricative', text: 'ʕ' },
+        { type: 'button', id: 'sharpS', text: 'ß' },
+        { type: 'button', id: 'ae', text: 'æ' },
+        { type: 'button', id: 'schwa', text: 'ə' },
+        { type: 'button', id: 'undertie', text: '‿' },
+        { type: 'button', id: 'squareRoot', text: '√' },
     ],
     [
         { type: 'button', id: 'graveAccent', text: 'à' },
