@@ -1,5 +1,5 @@
 <template>
-    <div class="editor-toolbar flex flex-wrap gap-1.5">
+    <div class="editor-toolbar flex items-center flex-wrap gap-1.5 lg:flex-nowrap lg:overflow-x-auto">
         <template
             v-for="(group, groupIndex) in items"
             :key="groupIndex"
@@ -13,7 +13,7 @@
                 :disabled="item.isDisabled"
                 :class="getButtonClasses(item)"
                 :ui="editorButtonUi"
-                :style="item.text ? { fontSize: '1.25rem', minWidth: '2.5rem', display: 'inline-flex', justifyContent: 'center', fontFamily: 'Helvetica' } : undefined"
+                :style="getButtonStyle(item)"
                 @click="emit('buttonClick', item.id)"
             >
                 {{ item.text }}
@@ -50,6 +50,25 @@ const emit = defineEmits<{
     buttonClick: [id: string]
 }>()
 
+const baseButtonStyle = {
+    width: '2.5rem',
+    height: '2.5rem',
+    display: 'inline-flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '0',
+}
+
+const textButtonStyle = {
+    ...baseButtonStyle,
+    fontSize: '1.25rem',
+    fontFamily: 'Helvetica',
+}
+
+const getButtonStyle = (item: IToolbarButton) => {
+    return item.text ? textButtonStyle : baseButtonStyle
+}
+
 const getButtonClasses = (item: IToolbarButton) => {
     const classes = ['editor-toolbar__button']
 
@@ -68,8 +87,8 @@ const getButtonClasses = (item: IToolbarButton) => {
     border-left: none;
     border-right: none;
     border-top: none;
-    padding: 0;
-    min-height: auto;
+    padding: 0 var(--workspace-card-header-padding-x);
+    min-height: var(--workspace-card-header-min-height);
 }
 
 .editor-toolbar__button--bold :deep(svg path) {
@@ -79,7 +98,6 @@ const getButtonClasses = (item: IToolbarButton) => {
 .editor-toolbar__divider {
     width: var(--border-width);
     background: var(--workspace-border);
-    align-self: stretch;
     opacity: 0.75;
 }
 </style>

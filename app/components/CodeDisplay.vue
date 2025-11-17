@@ -61,6 +61,16 @@ import { ghostButtonHoverClasses } from '~/utils/ghostButtonUi'
 
 const beautifyHtml = beautify.html
 
+const beautifyHtmlOptions = {
+    indent_size: 2,
+    wrap_line_length: 40,
+    preserve_newlines: true,
+    max_preserve_newlines: 2,
+    wrap_attributes: 'force-aligned',
+    end_with_newline: false,
+    inline: [],
+}
+
 const { isLoading } = useArticleStorage()
 
 interface IProps {
@@ -96,15 +106,7 @@ const formattedCode = computed<string>(() => {
     if (language === 'html') {
         const htmlString = typeof code === 'string' ? code : String(code)
         return isFormatted.value
-            ? beautifyHtml(htmlString, {
-                    indent_size: 2,
-                    wrap_line_length: 40,
-                    preserve_newlines: true,
-                    max_preserve_newlines: 2,
-                    wrap_attributes: 'force-aligned',
-                    end_with_newline: false,
-                    inline: [],
-                })
+            ? beautifyHtml(htmlString, beautifyHtmlOptions)
             : htmlString
     }
 

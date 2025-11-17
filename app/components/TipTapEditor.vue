@@ -1,47 +1,32 @@
 <template>
-    <WorkspaceCard>
-        <template #header>
-            <div class="editor-header">
-                <EditorToolbar
-                    :items="toolbarItems"
-                    @button-click="handleButtonClick"
+    <div class="editor-shell">
+        <WorkspaceCard>
+            <template #header>
+                <div class="editor-header">
+                    <EditorToolbar
+                        :items="toolbarItems"
+                        @button-click="handleButtonClick"
+                    />
+                </div>
+            </template>
+            <div class="editor-wrapper flex flex-1 p-4 lg:p-5 overflow-y-auto">
+                <SkeletonList
+                    v-if="isLoading"
+                    :total-height="400"
                 />
-                <div class="header-divider" />
-                <div class="export-buttons">
-                    <UButton
-                        v-for="option in formatOptions"
-                        :key="option.key"
-                        :icon="option.icon"
-                        color="neutral"
-                        variant="ghost"
-                        size="sm"
-                        :loading="activeFormat === option.key && isDownloading"
-                        :disabled="isDownloading"
-                        :class="ghostButtonHoverClasses"
-                        @click="handleDownload(option.key)"
-                    >
-                        {{ option.label }}
-                    </UButton>
+                <div
+                    v-else-if="editor"
+                    class="flex-1"
+                    @click="() => editor?.commands.focus()"
+                >
+                    <EditorContent
+                        :editor="editor"
+                        class="tiptap"
+                    />
                 </div>
             </div>
-        </template>
-        <div class="editor-wrapper flex flex-1 p-4 lg:p-5 overflow-y-auto">
-            <SkeletonList
-                v-if="isLoading"
-                :total-height="400"
-            />
-            <div
-                v-else-if="editor"
-                class="flex-1"
-                @click="() => editor?.commands.focus()"
-            >
-                <EditorContent
-                    :editor="editor"
-                    class="tiptap"
-                />
-            </div>
-        </div>
-    </WorkspaceCard>
+        </WorkspaceCard>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -52,23 +37,6 @@ import { useArticleStorage } from '~/composables/useArticleStorage'
 import { whenever } from '@vueuse/core'
 import { toolbarConfig, type TToolbarItemConfig } from '~/utils/editorToolbarConfig'
 import type { IToolbarButton } from '~/components/EditorToolbar.vue'
-import type { TExportFormat } from '~/utils/downloadArticle'
-import { downloadArticle } from '~/utils/downloadArticle'
-import { ghostButtonHoverClasses } from '~/utils/ghostButtonUi'
-
-interface IFormatOption {
-    key: TExportFormat
-    label: string
-    icon: string
-}
-
-const formatOptions: IFormatOption[] = [
-    { key: 'docx', label: 'DOCX', icon: 'tabler:file-download' },
-    { key: 'pdf', label: 'PDF', icon: 'tabler:file-text' },
-    { key: 'json', label: 'JSON', icon: 'tabler:braces' },
-    { key: 'html', label: 'HTML', icon: 'tabler:code' },
-]
-
 const { content, isLoading } = useArticleStorage()
 
 const editor = useTipTapEditor()
@@ -240,33 +208,6 @@ const handleButtonClick = (buttonId: string) => {
     }
 }
 
-const snapshot = computed(() => ({
-    json: content.value?.json ?? {},
-    html: content.value?.html ?? '<p></p>',
-}))
-
-const isDownloading = ref(false)
-const activeFormat = ref<TExportFormat | null>(null)
-
-const handleDownload = async (format: TExportFormat) => {
-    if (isDownloading.value) return
-    try {
-        isDownloading.value = true
-        activeFormat.value = format
-        await downloadArticle({
-            format,
-            snapshot: snapshot.value,
-            filename: 'article',
-        })
-    }
-    catch (error) {
-        console.error('Failed to download file:', error)
-    }
-    finally {
-        isDownloading.value = false
-        activeFormat.value = null
-    }
-}
 </script>
 
 <style scoped>
@@ -386,42 +327,17 @@ const handleDownload = async (format: TExportFormat) => {
     border-top: var(--border-width) solid var(--workspace-border-strong);
 }
 
+.editor-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
 .editor-header {
     display: flex;
     align-items: center;
-    gap: 1rem;
     padding: var(--workspace-card-header-padding-y) var(--workspace-card-header-padding-x);
     min-height: var(--workspace-card-header-min-height);
-}
-
-.header-divider {
-    width: 1px;
-    height: 2rem;
-    background-color: var(--workspace-border);
-    flex-shrink: 0;
-}
-
-.export-buttons {
-    display: flex;
-    gap: 0.5rem;
-    margin-left: auto;
-}
-
-@media (max-width: 640px) {
-    .editor-header {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0.75rem;
-    }
-
-    .header-divider {
-        display: none;
-    }
-
-    .export-buttons {
-        margin-left: 0;
-        justify-content: flex-start;
-        flex-wrap: wrap;
-    }
+    padding-top: 0.5rem;
 }
 </style>

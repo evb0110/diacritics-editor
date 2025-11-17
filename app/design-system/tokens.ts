@@ -130,7 +130,7 @@ const structureVars: CssVariableMap = {
     '--border-width': '1px',
     '--workspace-card-radius': '1rem',
     '--workspace-card-header-padding-x': '1rem',
-    '--workspace-card-header-padding-y': '0.75rem',
+    '--workspace-card-header-padding-y': '0.25rem',
     '--workspace-card-header-min-height': '3.5rem',
     '--code-display-max-height': '26rem',
     '--code-display-min-height': '16rem',

@@ -1,4 +1,3 @@
-import beautify from 'js-beautify'
 import fontRegularUrl from '~/assets/fonts/NotoSans-Regular.ttf?url'
 import fontBoldUrl from '~/assets/fonts/NotoSans-Bold.ttf?url'
 import fontItalicUrl from '~/assets/fonts/NotoSans-Italic.ttf?url'
@@ -6,13 +5,9 @@ import fontBoldItalicUrl from '~/assets/fonts/NotoSans-BoldItalic.ttf?url'
 import monoFontUrl from '~/assets/fonts/JetBrainsMono-Regular.ttf?url'
 import {
     exportColorTokens,
-    exportLayoutTokens,
     type ExportColorValues,
-    type ExportLayoutValues,
     type ICssVarToken,
 } from '~/design-system/tokens'
-
-const beautifyHtml = beautify.html
 
 const readCssVariableValue = (token: ICssVarToken, declaration: CSSStyleDeclaration | null) => {
     if (!declaration) {
@@ -88,10 +83,9 @@ const colorToPdf = (pdfLib: typeof import('pdf-lib'), value: string) => {
     return pdfLib.rgb(r / 255, g / 255, b / 255)
 }
 
-export type TExportFormat = 'json' | 'html' | 'docx' | 'pdf'
+export type TExportFormat = 'docx' | 'pdf'
 
 export interface IArticleSnapshot {
-    json?: Record<string, unknown>
     html?: string
 }
 
@@ -133,8 +127,6 @@ type TDividerBlock = {
 
 type TExportBlock = TParagraphBlock | THeadingBlock | TListBlock | TDividerBlock
 
-const EXPORT_WRAPPER_CLASS = 'diacritics-export'
-
 const PDF_FONT_URLS = {
     regular: fontRegularUrl,
     bold: fontBoldUrl,
@@ -171,133 +163,6 @@ const ensureClientEnvironment = () => {
         throw new Error('File downloads are only available in the browser context.')
     }
 }
-
-const buildHtmlExport = (htmlContent: string, colors: ExportColorValues, layout: ExportLayoutValues) => {
-    const beautified = beautifyHtml(htmlContent, {
-        indent_size: 2,
-        wrap_line_length: 60,
-        preserve_newlines: true,
-        max_preserve_newlines: 2,
-        wrap_attributes: 'force-aligned',
-        end_with_newline: false,
-        inline: [],
-    })
-
-    const escapedSource = beautified.replace(/</g, '&lt;').replace(/>/g, '&gt;')
-
-    const styles = `<style>
-.${EXPORT_WRAPPER_CLASS} {
-    margin: 0;
-    padding: ${layout.pagePaddingY} ${layout.pagePaddingX};
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background-color: ${colors.pageBackground};
-    color: ${colors.text};
-}
-.${EXPORT_WRAPPER_CLASS}__container {
-    max-width: ${layout.cardMaxWidth};
-    margin: 0 auto;
-    background-color: ${colors.cardBackground};
-    padding: ${layout.cardPadding};
-    border-radius: ${layout.cardRadius};
-    box-shadow: ${colors.cardShadow};
-}
-.${EXPORT_WRAPPER_CLASS}__title {
-    font-size: ${layout.titleSize};
-    font-weight: 600;
-    margin-bottom: ${layout.titleSpacingBottom};
-}
-.${EXPORT_WRAPPER_CLASS}__subtitle {
-    font-size: ${layout.subtitleSize};
-    color: ${colors.mutedText};
-    margin-bottom: ${layout.subtitleSpacingBottom};
-}
-.${EXPORT_WRAPPER_CLASS}__content {
-    line-height: ${layout.bodyLineHeight};
-    font-size: ${layout.bodyFontSize};
-}
-.${EXPORT_WRAPPER_CLASS}__content p {
-    margin: 1em 0;
-    min-height: 1.25em;
-}
-.${EXPORT_WRAPPER_CLASS}__content h1,
-.${EXPORT_WRAPPER_CLASS}__content h2,
-.${EXPORT_WRAPPER_CLASS}__content h3,
-.${EXPORT_WRAPPER_CLASS}__content h4,
-.${EXPORT_WRAPPER_CLASS}__content h5,
-.${EXPORT_WRAPPER_CLASS}__content h6 {
-    margin: 1.4em 0 0.5em;
-    font-weight: 600;
-}
-.${EXPORT_WRAPPER_CLASS}__content ul,
-.${EXPORT_WRAPPER_CLASS}__content ol {
-    margin: 1em 0;
-    padding-left: ${layout.listPadding};
-}
-.${EXPORT_WRAPPER_CLASS}__content li {
-    margin: 0.4em 0;
-}
-.${EXPORT_WRAPPER_CLASS}__content pre {
-    background-color: ${colors.codePanelBackground};
-    color: ${colors.codePanelText};
-    padding: ${layout.codePadding};
-    border-radius: ${layout.codeRadius};
-    overflow-x: auto;
-    font-size: ${layout.codeFontSize};
-}
-.${EXPORT_WRAPPER_CLASS}__divider {
-    margin: ${layout.dividerSpacing} 0;
-    border: none;
-    border-top: ${layout.dividerThickness} solid ${colors.divider};
-}
-.${EXPORT_WRAPPER_CLASS}__code-title {
-    font-size: ${layout.codeTitleSize};
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-}
-.${EXPORT_WRAPPER_CLASS}__source {
-    background-color: ${colors.sourceBackground};
-    padding: ${layout.sourcePadding};
-    border-radius: ${layout.sourceRadius};
-    font-family: 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
-    overflow-x: auto;
-    font-size: ${layout.codeFontSize};
-    line-height: ${layout.sourceLineHeight};
-    color: ${colors.sourceText};
-}
-</style>`
-
-    const content = `
-<div class="${EXPORT_WRAPPER_CLASS}">
-    <div class="${EXPORT_WRAPPER_CLASS}__container">
-        <div>
-            <h1 class="${EXPORT_WRAPPER_CLASS}__title">HTML Content</h1>
-            <p class="${EXPORT_WRAPPER_CLASS}__subtitle">Generated with Diacritics Editor</p>
-        </div>
-        <div class="${EXPORT_WRAPPER_CLASS}__content">
-${beautified}
-        </div>
-        <hr class="${EXPORT_WRAPPER_CLASS}__divider" />
-        <div>
-            <h2 class="${EXPORT_WRAPPER_CLASS}__code-title">Source Code</h2>
-            <pre class="${EXPORT_WRAPPER_CLASS}__source">${escapedSource}</pre>
-        </div>
-    </div>
-</div>`
-
-    return `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HTML Content</title>
-    ${styles}
-</head>
-<body>
-${content}
-</body>
-</html>`
-}
-
 const triggerDownload = (blob: Blob, filename: string) => {
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
@@ -311,17 +176,6 @@ const triggerDownload = (blob: Blob, filename: string) => {
         document.body.removeChild(link)
         URL.revokeObjectURL(url)
     }, 120)
-}
-
-const downloadHtml = (documentHtml: string, filename: string) => {
-    const blob = new Blob([documentHtml], { type: 'text/html' })
-    triggerDownload(blob, `${filename}.html`)
-}
-
-const downloadJson = (json: Record<string, unknown>, filename: string) => {
-    const jsonString = JSON.stringify(json, null, 2)
-    const blob = new Blob([jsonString], { type: 'application/json' })
-    triggerDownload(blob, `${filename}.json`)
 }
 
 const mergeSegments = (segments: IRichTextSegment[]): IRichTextSegment[] => {
@@ -1090,19 +944,10 @@ const downloadPdf = async (blocks: TExportBlock[], filename: string, colors: Exp
 export const downloadArticle = async ({ format, snapshot, filename = 'article' }: IDownloadOptions): Promise<void> => {
     ensureClientEnvironment()
     const exportColors: ExportColorValues = resolveCssVariableValues(exportColorTokens)
-    const exportLayout: ExportLayoutValues = resolveCssVariableValues(exportLayoutTokens)
-    const jsonContent = snapshot.json ?? {}
     const htmlContent = snapshot.html ?? '<p></p>'
-    const documentHtml = buildHtmlExport(htmlContent, exportColors, exportLayout)
     const exportBlocks = collectExportBlocks(htmlContent)
 
     switch (format) {
-        case 'json':
-            downloadJson(jsonContent, filename)
-            return
-        case 'html':
-            downloadHtml(documentHtml, filename)
-            return
         case 'docx':
             await downloadDocx(exportBlocks, filename, exportColors)
             return

@@ -1,16 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Diacritics Editor mark">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Diacritics Editor">
   <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#f8fafc"/>
-      <stop offset="100%" stop-color="#e0f2fe"/>
-    </linearGradient>
     <linearGradient id="badge" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#60a5fa"/>
-      <stop offset="100%" stop-color="#2563eb"/>
+      <stop offset="0%" stop-color="#5b8def"/>
+      <stop offset="100%" stop-color="#5b8def"/>
     </linearGradient>
   </defs>
-  <rect width="64" height="64" fill="url(#bg)"/>
-  <circle cx="32" cy="32" r="22" fill="url(#badge)"/>
-  <path d="M23 42V20h11c6 0 9 3 9 7 0 4-3 7-8 7h-6v8z" fill="#ffffff" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M34 34l8 10" stroke="#fde047" stroke-width="4" stroke-linecap="round"/>
+  <rect width="64" height="64" rx="10" fill="url(#badge)"/>
+  <text x="29" y="48" font-family="Arial, sans-serif" font-size="42" font-weight="bold" fill="#ffffff" text-anchor="middle">a</text>
+  <path d="M34 18 L39 12" stroke="#ffffff" stroke-width="4" fill="none" stroke-linecap="round"/>
 </svg>
