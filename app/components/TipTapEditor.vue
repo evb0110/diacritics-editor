@@ -140,6 +140,37 @@ const applyDiacritic = (editor: Editor, combiningChar: string) => {
     }
 }
 
+const transformSelectedText = (editor: Editor, transformFn: (text: string) => string) => {
+    const { state } = editor
+    const { selection } = state
+    const { from, to } = selection
+    const { doc } = state
+
+    if (from === to) {
+        return
+    }
+
+    const selectedText = doc.textBetween(from, to)
+    const transformedText = transformFn(selectedText)
+
+    let marks: typeof state.schema.text extends (text: string, marks?: infer M) => unknown ? M : never = null
+    doc.nodesBetween(from, to, (node) => {
+        if (node.isText && node.marks && node.marks.length > 0) {
+            marks = node.marks
+        }
+    })
+
+    editor.chain()
+        .focus()
+        .deleteRange({ from, to })
+        .command(({ tr }) => {
+            const node = state.schema.text(transformedText, marks)
+            tr.insert(tr.selection.from, node)
+            return true
+        })
+        .run()
+}
+
 const executeCommand = (buttonId: string, editor: Editor) => {
     if (specialCharMap[buttonId]) {
         editor.chain().focus().insertContent(specialCharMap[buttonId]).run()
@@ -156,6 +187,9 @@ const executeCommand = (buttonId: string, editor: Editor) => {
         italic: () => editor.chain().focus().toggleItalic().run(),
         underline: () => editor.chain().focus().toggleUnderline().run(),
         strikethrough: () => editor.chain().focus().toggleStrike().run(),
+        uppercase: () => transformSelectedText(editor, text => text.toUpperCase()),
+        lowercase: () => transformSelectedText(editor, text => text.toLowerCase()),
+        smallCaps: () => editor.chain().focus().toggleSmallCaps().run(),
         undo: () => editor.chain().focus().undo().run(),
         redo: () => editor.chain().focus().redo().run(),
     }
@@ -173,6 +207,9 @@ const checkIsActive = (buttonId: string, editor: Editor): boolean => {
         italic: () => editor.isActive('italic'),
         underline: () => editor.isActive('underline'),
         strikethrough: () => editor.isActive('strike'),
+        smallCaps: () => editor.isActive('smallCaps'),
+        uppercase: () => false,
+        lowercase: () => false,
         undo: () => false,
         redo: () => false,
     }
@@ -195,6 +232,14 @@ const canApplyDiacritic = (editor: Editor): boolean => {
     return textBefore.length > 0 && !/\s/.test(textBefore)
 }
 
+const hasTextSelection = (editor: Editor): boolean => {
+    const { state } = editor
+    const { selection } = state
+    const { from, to } = selection
+
+    return from !== to
+}
+
 const checkCanExecute = (buttonId: string, editor: Editor): boolean => {
     if (specialCharMap[buttonId]) {
         return true
@@ -205,6 +250,9 @@ const checkCanExecute = (buttonId: string, editor: Editor): boolean => {
     }
 
     const canExecuteChecks = {
+        uppercase: () => hasTextSelection(editor),
+        lowercase: () => hasTextSelection(editor),
+        smallCaps: () => hasTextSelection(editor),
         undo: () => editor.can().chain().focus().undo().run(),
         redo: () => editor.can().chain().focus().redo().run(),
     }
@@ -351,6 +399,10 @@ const handleButtonClick = (buttonId: string) => {
     margin-top: var(--editor-divider-spacing);
     margin-bottom: var(--editor-divider-spacing);
     border-top: var(--border-width) solid var(--workspace-border-strong);
+}
+
+.tiptap :deep(span[data-small-caps]) {
+    font-variant: small-caps;
 }
 
 .editor-shell {
