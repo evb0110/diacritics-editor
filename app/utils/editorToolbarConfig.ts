@@ -20,6 +20,10 @@ export const toolbarConfig: TToolbarItemConfig[][] = [
         { type: 'button', id: 'redo', icon: 'tabler:arrow-forward-up' },
     ],
     [
+        { type: 'button', id: 'glottalStop', text: 'Ɂ' },
+        { type: 'button', id: 'pharyngealFricative', text: 'ʕ' },
+    ],
+    [
         { type: 'button', id: 'graveAccent', text: 'à' },
         { type: 'button', id: 'acuteAccent', text: 'á' },
         { type: 'button', id: 'circumflexAccent', text: 'â' },

@@ -66,7 +66,7 @@ const beautifyHtmlOptions = {
     wrap_line_length: 40,
     preserve_newlines: true,
     max_preserve_newlines: 2,
-    wrap_attributes: 'force-aligned',
+    wrap_attributes: 'force-aligned' as const,
     end_with_newline: false,
     inline: [],
 }

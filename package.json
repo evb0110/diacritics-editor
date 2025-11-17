@@ -39,6 +39,7 @@
   "devDependencies": {
     "@iconify-json/heroicons": "^1.2.3",
     "@iconify-json/tabler": "^1.2.23",
+    "@nuxtjs/seo": "^3.2.2",
     "@types/node": "^24.6.2",
     "eslint-plugin-import": "^2.32.0",
     "prettier": "^3.6.2",

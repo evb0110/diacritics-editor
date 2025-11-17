@@ -81,6 +81,11 @@ whenever(() => editor.value?.getJSON(), () => {
     })
 }, { deep: true })
 
+const specialCharMap: Record<string, string> = {
+    glottalStop: 'Ɂ',
+    pharyngealFricative: 'ʕ',
+}
+
 const diacriticMap: Record<string, string> = {
     graveAccent: '\u0300',
     acuteAccent: '\u0301',
@@ -110,20 +115,20 @@ const applyDiacritic = (editor: Editor, combiningChar: string) => {
     const textBefore = doc.textBetween(Math.max(0, $from.pos - 1), $from.pos)
 
     if (textBefore.length > 0 && !/\s/.test(textBefore)) {
-        const lastChar = textBefore
-        const withAccent = lastChar + combiningChar
+        const withAccent = textBefore + combiningChar
         const normalized = withAccent.normalize('NFC')
 
         const from = $from.pos - 1
         const to = $from.pos
 
-        let marks: any[] = []
+        const nodes: any[] = []
         doc.nodesBetween(from, to, (node) => {
-            if (node.isText && node.marks) {
-                marks = node.marks
-                return false
-            }
+            nodes.push(node)
         })
+
+        const marks = nodes
+            .filter(node => node.isText && node.marks)
+            .map(node => node.marks)[0] ?? []
 
         editor.chain()
             .focus()
@@ -138,6 +143,11 @@ const applyDiacritic = (editor: Editor, combiningChar: string) => {
 }
 
 const executeCommand = (buttonId: string, editor: Editor) => {
+    if (specialCharMap[buttonId]) {
+        editor.chain().focus().insertContent(specialCharMap[buttonId]).run()
+        return
+    }
+
     if (diacriticMap[buttonId]) {
         applyDiacritic(editor, diacriticMap[buttonId])
         return
@@ -156,7 +166,7 @@ const executeCommand = (buttonId: string, editor: Editor) => {
 }
 
 const checkIsActive = (buttonId: string, editor: Editor): boolean => {
-    if (diacriticMap[buttonId]) {
+    if (specialCharMap[buttonId] || diacriticMap[buttonId]) {
         return false
     }
 
@@ -188,6 +198,10 @@ const canApplyDiacritic = (editor: Editor): boolean => {
 }
 
 const checkCanExecute = (buttonId: string, editor: Editor): boolean => {
+    if (specialCharMap[buttonId]) {
+        return true
+    }
+
     if (diacriticMap[buttonId]) {
         return canApplyDiacritic(editor)
     }

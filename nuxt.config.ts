@@ -2,7 +2,7 @@
 import { themeColor } from './app/design-system/tokens'
 
 export default defineNuxtConfig({
-    modules: ['@nuxt/eslint', '@nuxt/ui'],
+    modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxtjs/seo'],
     pages: true,
     components: [{
         path: '~/components',
@@ -45,6 +45,12 @@ export default defineNuxtConfig({
         },
     },
     css: ['~/assets/css/main.css'],
+    site: {
+        url: 'https://diacritics-editor.com',
+        name: 'Diacritics Editor',
+        description: 'A powerful online text editor for adding and managing diacritical marks. Support for multiple languages, export to DOCX and PDF.',
+        defaultLocale: 'en',
+    },
     colorMode: {
         preference: 'system',
         fallback: 'light',
@@ -100,5 +106,11 @@ export default defineNuxtConfig({
         localApiEndpoint: false,
         mode: 'svg',
         provider: 'iconify',
+    },
+    ogImage: {
+        enabled: true,
+    },
+    seo: {
+        fallbackTitle: false,
     },
 })
