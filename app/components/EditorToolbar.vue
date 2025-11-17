@@ -36,20 +36,25 @@
             v-if="diacriticsGroup.length > 0"
             class="editor-toolbar__group editor-toolbar__group--diacritics"
         >
-            <UButton
+            <UTooltip
                 v-for="(item, itemIndex) in diacriticsGroup"
                 :key="itemIndex"
-                :icon="item.icon"
-                :color="item.isActive ? 'primary' : 'neutral'"
-                :variant="item.isActive ? 'soft' : 'ghost'"
-                :disabled="item.isDisabled"
-                :class="getButtonClasses(item)"
-                :ui="editorButtonUi"
-                :style="getButtonStyle(item)"
-                @click="emit('buttonClick', item.id)"
+                text="No valid character to the left"
+                :prevent="!item.isDisabled"
             >
-                {{ item.text }}
-            </UButton>
+                <UButton
+                    :icon="item.icon"
+                    :color="item.isActive ? 'primary' : 'neutral'"
+                    :variant="item.isActive ? 'soft' : 'ghost'"
+                    :disabled="item.isDisabled"
+                    :class="getButtonClasses(item)"
+                    :ui="editorButtonUi"
+                    :style="getButtonStyle(item)"
+                    @click="emit('buttonClick', item.id)"
+                >
+                    {{ item.text }}
+                </UButton>
+            </UTooltip>
         </div>
     </div>
 </template>
@@ -139,6 +144,10 @@ const getButtonClasses = (item: IToolbarButton) => {
 .editor-toolbar__group--diacritics {
     flex-wrap: wrap;
     position: relative;
+}
+
+.editor-toolbar__group--diacritics :deep(button:disabled) {
+    cursor: default;
 }
 
 .editor-toolbar__group--diacritics::before {
