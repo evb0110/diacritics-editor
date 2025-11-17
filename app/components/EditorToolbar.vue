@@ -1,6 +1,6 @@
 <template>
     <div class="editor-toolbar">
-        <div class="editor-toolbar__row editor-toolbar__row--main">
+        <div class="editor-toolbar__group editor-toolbar__group--main">
             <template
                 v-for="(group, groupIndex) in items.slice(0, 3)"
                 :key="groupIndex"
@@ -21,20 +21,20 @@
                 </UButton>
                 <div
                     v-if="groupIndex < 2"
-                    class="editor-toolbar__divider editor-toolbar__divider--vertical"
+                    class="editor-toolbar__divider"
                     aria-hidden="true"
                 />
             </template>
         </div>
 
         <div
-            class="editor-toolbar__divider editor-toolbar__divider--horizontal"
+            class="editor-toolbar__divider--horizontal"
             aria-hidden="true"
         />
 
         <div
             v-if="items[3]"
-            class="editor-toolbar__row editor-toolbar__row--diacritics"
+            class="editor-toolbar__group editor-toolbar__group--diacritics"
         >
             <UButton
                 v-for="(item, itemIndex) in items[3]"
@@ -117,41 +117,41 @@ const getButtonClasses = (item: IToolbarButton) => {
     padding: 0 var(--workspace-card-header-padding-x);
     min-height: var(--workspace-card-header-min-height);
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
     gap: 0.5rem;
 }
 
-@media (min-width: 1480px) {
-    .editor-toolbar {
-        flex-direction: row;
-        align-items: center;
-        gap: 0;
-    }
-}
-
-.editor-toolbar__row {
+.editor-toolbar__group {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
     gap: 0.375rem;
 }
 
-@media (min-width: 1480px) {
-    .editor-toolbar__row {
-        flex-wrap: nowrap;
-    }
+.editor-toolbar__group--main {
+    flex-shrink: 0;
 }
 
-.editor-toolbar__button--bold :deep(svg path) {
-    stroke-width: 3;
+.editor-toolbar__group--diacritics {
+    flex-wrap: wrap;
+    position: relative;
 }
 
-.editor-toolbar__divider--vertical {
+.editor-toolbar__group--diacritics::before {
+    content: '';
     width: var(--border-width);
     height: 2.5rem;
     background: var(--workspace-border);
     opacity: 0.75;
-    margin: 0 0.5rem;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+    display: none;
+}
+
+@media (min-width: 1920px) {
+    .editor-toolbar__group--diacritics::before {
+        display: block;
+    }
 }
 
 .editor-toolbar__divider--horizontal {
@@ -159,20 +159,27 @@ const getButtonClasses = (item: IToolbarButton) => {
     height: var(--border-width);
     background: var(--workspace-border);
     opacity: 0.75;
+    flex-basis: 100%;
+    margin: 0;
+    display: block;
 }
 
-@media (min-width: 1480px) {
+@media (min-width: 1920px) {
     .editor-toolbar__divider--horizontal {
         display: none;
     }
+}
 
-    .editor-toolbar__row--diacritics::before {
-        content: '';
-        width: var(--border-width);
-        height: 2.5rem;
-        background: var(--workspace-border);
-        opacity: 0.75;
-        margin: 0 0.5rem;
-    }
+.editor-toolbar__button--bold :deep(svg path) {
+    stroke-width: 3;
+}
+
+.editor-toolbar__divider {
+    width: var(--border-width);
+    height: 2.5rem;
+    background: var(--workspace-border);
+    opacity: 0.75;
+    margin: 0 0.5rem;
+    flex-shrink: 0;
 }
 </style>
