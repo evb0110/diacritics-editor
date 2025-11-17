@@ -36,5 +36,6 @@ export const toolbarConfig: TToolbarItemConfig[][] = [
         { type: 'button', id: 'ringBelowAccent', text: 'ḁ' },
         { type: 'button', id: 'cedillaAccent', text: 'a̧' },
         { type: 'button', id: 'circumflexBelowAccent', text: 'a̭' },
+        { type: 'button', id: 'breveBelowAccent', text: 'a̮' },
     ],
 ]

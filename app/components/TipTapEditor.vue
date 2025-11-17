@@ -98,6 +98,7 @@ const diacriticMap: Record<string, string> = {
     ringBelowAccent: '\u0325',
     cedillaAccent: '\u0327',
     circumflexBelowAccent: '\u032D',
+    breveBelowAccent: '\u032E',
 }
 
 const applyDiacritic = (editor: Editor, combiningChar: string) => {
