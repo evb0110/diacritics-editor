@@ -37,6 +37,7 @@ import { useArticleStorage } from '~/composables/useArticleStorage'
 import { whenever } from '@vueuse/core'
 import { toolbarConfig, type TToolbarItemConfig } from '~/utils/editorToolbarConfig'
 import type { IToolbarButton } from '~/components/EditorToolbar.vue'
+
 const { content, isLoading } = useArticleStorage()
 
 const editor = useTipTapEditor()
@@ -115,10 +116,22 @@ const applyDiacritic = (editor: Editor, combiningChar: string) => {
         const from = $from.pos - 1
         const to = $from.pos
 
+        let marks: any[] = []
+        doc.nodesBetween(from, to, (node) => {
+            if (node.isText && node.marks) {
+                marks = node.marks
+                return false
+            }
+        })
+
         editor.chain()
             .focus()
             .deleteRange({ from, to })
-            .insertContent(normalized)
+            .command(({ tr }) => {
+                const node = state.schema.text(normalized, marks)
+                tr.insert(tr.selection.from, node)
+                return true
+            })
             .run()
     }
 }
@@ -207,7 +220,6 @@ const handleButtonClick = (buttonId: string) => {
         executeCommand(buttonId, editor.value)
     }
 }
-
 </script>
 
 <style scoped>
@@ -230,6 +242,7 @@ const handleButtonClick = (buttonId: string) => {
     outline: none;
     min-height: 100%;
     font-family: Helvetica, Arial, sans-serif;
+    font-size: 18px;
 }
 
 .tiptap :deep(h1) {

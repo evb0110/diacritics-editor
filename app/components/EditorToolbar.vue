@@ -20,7 +20,7 @@
             </UButton>
             <div
                 v-if="groupIndex < items.length - 1"
-                class="editor-toolbar__divider"
+                class="editor-toolbar__divider mx-2"
                 aria-hidden="true"
             />
         </template>
@@ -97,6 +97,7 @@ const getButtonClasses = (item: IToolbarButton) => {
 
 .editor-toolbar__divider {
     width: var(--border-width);
+    height: 2.5rem;
     background: var(--workspace-border);
     opacity: 0.75;
 }

@@ -8,7 +8,7 @@
                 <h1 class="text-3xl lg:text-4xl font-bold text-workspace-text">
                     Diacritics Editor
                 </h1>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-16">
                     <ExportActions />
                     <ThemeToggle />
                 </div>
