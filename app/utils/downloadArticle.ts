@@ -417,11 +417,6 @@ const downloadDocx = async (blocks: TExportBlock[], filename: string, colors: Ex
         HeadingLevel,
         AlignmentType,
         LevelFormat,
-        ShadingType,
-        Table,
-        TableRow,
-        TableCell,
-        WidthType,
         BorderStyle,
     } = docxModule
 
@@ -436,7 +431,7 @@ const downloadDocx = async (blocks: TExportBlock[], filename: string, colors: Ex
         6: HeadingLevel.HEADING_6,
     }
 
-    const docElements: Array<InstanceType<typeof Paragraph> | InstanceType<typeof Table>> = []
+    const docElements: Array<InstanceType<typeof Paragraph>> = []
     const linkHex = colorToDocx(colors.link)
     const dividerHex = colorToDocx(colors.divider)
 

@@ -121,14 +121,12 @@ const applyDiacritic = (editor: Editor, combiningChar: string) => {
         const from = $from.pos - 1
         const to = $from.pos
 
-        const nodes: any[] = []
+        let marks: typeof state.schema.text extends (text: string, marks?: infer M) => unknown ? M : never = null
         doc.nodesBetween(from, to, (node) => {
-            nodes.push(node)
+            if (node.isText && node.marks) {
+                marks = node.marks
+            }
         })
-
-        const marks = nodes
-            .filter(node => node.isText && node.marks)
-            .map(node => node.marks)[0] ?? []
 
         editor.chain()
             .focus()
