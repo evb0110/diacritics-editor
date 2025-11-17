@@ -62,7 +62,7 @@ export const SmallCaps = Mark.create<ISmallCapsOptions>({
 
     addCommands() {
         return {
-            setSmallCaps: () => ({ commands, state }) => {
+            setSmallCaps: () => ({ commands, state, tr }) => {
                 const { selection } = state
                 const { from, to } = selection
 
@@ -70,16 +70,18 @@ export const SmallCaps = Mark.create<ISmallCapsOptions>({
                     const selectedText = state.doc.textBetween(from, to)
                     const transformedText = toSmallCaps(selectedText)
 
-                    return commands.insertContentAt(
-                        { from, to },
-                        transformedText,
-                        { updateSelection: true },
-                    )
+                    const marks = state.selection.$from.marks().concat(state.schema.mark(this.name))
+                    const textNode = state.schema.text(transformedText, marks)
+
+                    tr.replaceRangeWith(from, to, textNode)
+                    tr.setSelection(state.selection.constructor.create(tr.doc, from, from + transformedText.length))
+
+                    return true
                 }
 
                 return commands.setMark(this.name)
             },
-            toggleSmallCaps: () => ({ commands, state }) => {
+            toggleSmallCaps: () => ({ commands, state, tr }) => {
                 const isActive = state.selection.$from.marks().some(mark => mark.type.name === this.name)
                 const { selection } = state
                 const { from, to } = selection
@@ -88,11 +90,19 @@ export const SmallCaps = Mark.create<ISmallCapsOptions>({
                     const selectedText = state.doc.textBetween(from, to)
                     const transformedText = isActive ? fromSmallCaps(selectedText) : toSmallCaps(selectedText)
 
-                    return commands.insertContentAt(
-                        { from, to },
-                        transformedText,
-                        { updateSelection: true },
-                    )
+                    let marks = state.selection.$from.marks()
+                    if (!isActive) {
+                        marks = marks.concat(state.schema.mark(this.name))
+                    } else {
+                        marks = marks.filter(mark => mark.type.name !== this.name)
+                    }
+
+                    const textNode = state.schema.text(transformedText, marks)
+
+                    tr.replaceRangeWith(from, to, textNode)
+                    tr.setSelection(state.selection.constructor.create(tr.doc, from, from + transformedText.length))
+
+                    return true
                 }
 
                 return commands.toggleMark(this.name)
