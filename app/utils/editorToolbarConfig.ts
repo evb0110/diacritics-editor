@@ -14,9 +14,7 @@ export const toolbarConfig: TToolbarItemConfig[][] = [
         { type: 'button', id: 'italic', icon: 'tabler:italic' },
         { type: 'button', id: 'underline', icon: 'tabler:underline' },
         { type: 'button', id: 'strikethrough', icon: 'tabler:strikethrough' },
-        { type: 'button', id: 'uppercase', icon: 'tabler:letter-case-upper' },
-        { type: 'button', id: 'lowercase', icon: 'tabler:letter-case-lower' },
-        { type: 'button', id: 'smallCaps', icon: 'tabler:letter-case' },
+        { type: 'button', id: 'smallCaps', text: 'ᴋ' },
     ],
     [
         { type: 'button', id: 'undo', icon: 'tabler:arrow-back-up' },

@@ -106,6 +106,36 @@ const diacriticMap: Record<string, string> = {
     breveBelowAccent: '\u032E',
 }
 
+const smallCapsMap: Record<string, string> = {
+    a: 'ᴀ', b: 'ʙ', c: 'ᴄ', d: 'ᴅ', e: 'ᴇ', f: 'ꜰ', g: 'ɢ', h: 'ʜ',
+    i: 'ɪ', j: 'ᴊ', k: 'ᴋ', l: 'ʟ', m: 'ᴍ', n: 'ɴ', o: 'ᴏ', p: 'ᴘ',
+    q: 'ǫ', r: 'ʀ', s: 's', t: 'ᴛ', u: 'ᴜ', v: 'ᴠ', w: 'ᴡ', x: 'x',
+    y: 'ʏ', z: 'ᴢ',
+    A: 'ᴀ', B: 'ʙ', C: 'ᴄ', D: 'ᴅ', E: 'ᴇ', F: 'ꜰ', G: 'ɢ', H: 'ʜ',
+    I: 'ɪ', J: 'ᴊ', K: 'ᴋ', L: 'ʟ', M: 'ᴍ', N: 'ɴ', O: 'ᴏ', P: 'ᴘ',
+    Q: 'ǫ', R: 'ʀ', S: 's', T: 'ᴛ', U: 'ᴜ', V: 'ᴠ', W: 'ᴡ', X: 'x',
+    Y: 'ʏ', Z: 'ᴢ',
+}
+
+const reverseSmallCapsMap: Record<string, string> = {
+    ᴀ: 'a', ʙ: 'b', ᴄ: 'c', ᴅ: 'd', ᴇ: 'e', ꜰ: 'f', ɢ: 'g', ʜ: 'h',
+    ɪ: 'i', ᴊ: 'j', ᴋ: 'k', ʟ: 'l', ᴍ: 'm', ɴ: 'n', ᴏ: 'o', ᴘ: 'p',
+    ǫ: 'q', ʀ: 'r', ᴛ: 't', ᴜ: 'u', ᴠ: 'v', ᴡ: 'w', ʏ: 'y', ᴢ: 'z',
+}
+
+const toSmallCaps = (text: string): string => {
+    return text.split('').map(char => smallCapsMap[char] ?? char).join('')
+}
+
+const fromSmallCaps = (text: string): string => {
+    return text.split('').map(char => reverseSmallCapsMap[char] ?? char).join('')
+}
+
+const isSmallCapsText = (text: string): boolean => {
+    const smallCapsChars = Object.keys(reverseSmallCapsMap)
+    return text.split('').some(char => smallCapsChars.includes(char))
+}
+
 const applyDiacritic = (editor: Editor, combiningChar: string) => {
     const { state } = editor
     const { selection } = state
@@ -140,7 +170,7 @@ const applyDiacritic = (editor: Editor, combiningChar: string) => {
     }
 }
 
-const transformSelectedText = (editor: Editor, transformFn: (text: string) => string) => {
+const transformSelectedText = (editor: Editor, transformFn: (text: string) => string, preserveSelection = false) => {
     const { state } = editor
     const { selection } = state
     const { from, to } = selection
@@ -160,7 +190,7 @@ const transformSelectedText = (editor: Editor, transformFn: (text: string) => st
         }
     })
 
-    editor.chain()
+    const chain = editor.chain()
         .focus()
         .deleteRange({ from, to })
         .command(({ tr }) => {
@@ -168,7 +198,32 @@ const transformSelectedText = (editor: Editor, transformFn: (text: string) => st
             tr.insert(tr.selection.from, node)
             return true
         })
-        .run()
+
+    if (preserveSelection) {
+        chain.setTextSelection({ from, to: from + transformedText.length })
+    }
+
+    chain.run()
+}
+
+const toggleSmallCaps = (editor: Editor) => {
+    const { state } = editor
+    const { selection } = state
+    const { from, to } = selection
+    const { doc } = state
+
+    if (from === to) {
+        return
+    }
+
+    const selectedText = doc.textBetween(from, to)
+    const hasSmallCaps = isSmallCapsText(selectedText)
+
+    transformSelectedText(
+        editor,
+        hasSmallCaps ? fromSmallCaps : toSmallCaps,
+        true,
+    )
 }
 
 const executeCommand = (buttonId: string, editor: Editor) => {
@@ -187,9 +242,7 @@ const executeCommand = (buttonId: string, editor: Editor) => {
         italic: () => editor.chain().focus().toggleItalic().run(),
         underline: () => editor.chain().focus().toggleUnderline().run(),
         strikethrough: () => editor.chain().focus().toggleStrike().run(),
-        uppercase: () => transformSelectedText(editor, text => text.toUpperCase()),
-        lowercase: () => transformSelectedText(editor, text => text.toLowerCase()),
-        smallCaps: () => editor.chain().focus().toggleSmallCaps().run(),
+        smallCaps: () => toggleSmallCaps(editor),
         undo: () => editor.chain().focus().undo().run(),
         redo: () => editor.chain().focus().redo().run(),
     }
@@ -207,9 +260,19 @@ const checkIsActive = (buttonId: string, editor: Editor): boolean => {
         italic: () => editor.isActive('italic'),
         underline: () => editor.isActive('underline'),
         strikethrough: () => editor.isActive('strike'),
-        smallCaps: () => editor.isActive('smallCaps'),
-        uppercase: () => false,
-        lowercase: () => false,
+        smallCaps: () => {
+            const { state } = editor
+            const { selection } = state
+            const { from, to } = selection
+            const { doc } = state
+
+            if (from === to) {
+                return false
+            }
+
+            const selectedText = doc.textBetween(from, to)
+            return isSmallCapsText(selectedText)
+        },
         undo: () => false,
         redo: () => false,
     }
@@ -250,8 +313,6 @@ const checkCanExecute = (buttonId: string, editor: Editor): boolean => {
     }
 
     const canExecuteChecks = {
-        uppercase: () => hasTextSelection(editor),
-        lowercase: () => hasTextSelection(editor),
         smallCaps: () => hasTextSelection(editor),
         undo: () => editor.can().chain().focus().undo().run(),
         redo: () => editor.can().chain().focus().redo().run(),
@@ -399,10 +460,6 @@ const handleButtonClick = (buttonId: string) => {
     margin-top: var(--editor-divider-spacing);
     margin-bottom: var(--editor-divider-spacing);
     border-top: var(--border-width) solid var(--workspace-border-strong);
-}
-
-.tiptap :deep(span[data-small-caps]) {
-    font-variant: small-caps;
 }
 
 .editor-shell {
