@@ -1,12 +1,10 @@
 <template>
     <div class="space-y-4 w-full">
-        <ClientOnly>
-            <USkeleton
-                v-for="(skeleton, index) in skeletons"
-                :key="index"
-                :class="[skeleton.height, skeleton.width]"
-            />
-        </ClientOnly>
+        <USkeleton
+            v-for="(skeleton, index) in skeletons"
+            :key="index"
+            :class="[skeleton.height, skeleton.width]"
+        />
     </div>
 </template>
 
@@ -46,7 +44,7 @@ function getRandomItem<T>(array: T[]): T {
     return item
 }
 
-const skeletons = computed((): ISkeleton[] => {
+const skeletons = useState('skeletons', () => {
     const result: ISkeleton[] = []
     const gapSize = 16
     let accumulatedHeight = 0
