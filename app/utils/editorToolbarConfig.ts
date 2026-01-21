@@ -54,5 +54,9 @@ export const toolbarConfig: IToolbarConfig = {
         { type: 'button', id: 'cedillaAccent', text: 'a̧' },
         { type: 'button', id: 'circumflexBelowAccent', text: 'a̭' },
         { type: 'button', id: 'breveBelowAccent', text: 'a̮' },
+        { type: 'button', id: 'smoothBreathing', text: 'ὠ' },
+        { type: 'button', id: 'roughBreathing', text: 'ὡ' },
+        { type: 'button', id: 'greekPerispomeni', text: 'ῶ' },
+        { type: 'button', id: 'iotaSubscript', text: 'ῳ' },
     ],
 }

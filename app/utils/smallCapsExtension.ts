@@ -93,7 +93,8 @@ export const SmallCaps = Mark.create<ISmallCapsOptions>({
                     let marks = state.selection.$from.marks()
                     if (!isActive) {
                         marks = marks.concat(state.schema.mark(this.name))
-                    } else {
+                    }
+                    else {
                         marks = marks.filter(mark => mark.type.name !== this.name)
                     }
 
