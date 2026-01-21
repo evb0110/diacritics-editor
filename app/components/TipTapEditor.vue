@@ -230,6 +230,7 @@ const transformConfigItem = (config: TToolbarItemConfig): IToolbarButton => {
         id: config.id,
         icon: config.icon,
         text: config.text,
+        tooltip: config.tooltip,
         isActive: editor.value ? checkIsActive(config.id, editor.value) : false,
         isDisabled: !editor.value || !checkCanExecute(config.id, editor.value),
         isBold: config.isBold,

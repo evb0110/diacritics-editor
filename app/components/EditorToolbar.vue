@@ -5,20 +5,25 @@
                 v-for="(group, groupIndex) in mainGroups"
                 :key="groupIndex"
             >
-                <UButton
+                <UTooltip
                     v-for="(item, itemIndex) in group"
                     :key="itemIndex"
-                    :icon="item.icon"
-                    :color="item.isActive ? 'primary' : 'neutral'"
-                    :variant="item.isActive ? 'soft' : 'ghost'"
-                    :disabled="item.isDisabled"
-                    :class="getButtonClasses(item)"
-                    :ui="editorButtonUi"
-                    :style="getButtonStyle(item)"
-                    @click="emit('buttonClick', item.id)"
+                    :text="item.tooltip"
+                    :delay-duration="700"
                 >
-                    {{ item.text }}
-                </UButton>
+                    <UButton
+                        :icon="item.icon"
+                        :color="item.isActive ? 'primary' : 'neutral'"
+                        :variant="item.isActive ? 'soft' : 'ghost'"
+                        :disabled="item.isDisabled"
+                        :class="getButtonClasses(item)"
+                        :ui="editorButtonUi"
+                        :style="getButtonStyle(item)"
+                        @click="emit('buttonClick', item.id)"
+                    >
+                        {{ item.text }}
+                    </UButton>
+                </UTooltip>
                 <div
                     v-if="groupIndex < mainGroups.length - 1"
                     class="editor-toolbar__divider"
@@ -39,8 +44,8 @@
             <UTooltip
                 v-for="(item, itemIndex) in diacriticsGroup"
                 :key="itemIndex"
-                text="No valid character to the left"
-                :prevent="!item.isDisabled"
+                :text="item.isDisabled ? 'No valid character to the left' : item.tooltip"
+                :delay-duration="700"
             >
                 <UButton
                     :icon="item.icon"
@@ -67,6 +72,7 @@ export interface IToolbarButton {
     id: string
     icon?: string
     text?: string
+    tooltip?: string
     isActive: boolean
     isDisabled: boolean
     isBold?: boolean
